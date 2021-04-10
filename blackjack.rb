@@ -13,28 +13,41 @@ class Blackjack
   DEALER_DRAW_NUMBER = 16
   RATE = 1.5
 
-  def start
+  def self.request_player_to_enter_money
+    puts "所持金を入力して下さい。"
+    money = 0
+    loop do
+      money = gets.to_i
+      break if money >= 1
+      puts "1円以上でゲームに参加してください"
+    end
+    money
+  end
+
+  def initialize(player,dealer)
+    @player = player
+    @dealer = dealer
+  end
+
+  def start(player_money)
 
     start_message
 
     while true
-      build_player
-      build_deck
-      build_dealer
+      request_bet(@player)
+      
+      p deck = Deck.new
+      
       @count_11 = 0
       @count_11_dealer = 0
       @player_bust_flag = 0
       @dealer_bust_flag = 0
 
-      disp_money(@player)
-
-      request_bet(@player)
-
       information1
 
-      @dealer.first_draw_dealer(@deck)
+      @dealer.first_draw(deck)
       @dealer_point = point_dealer
-      @player.first_draw_player(@deck)
+      @player.first_draw(deck)
       @player_point = point_player
 
       if @count_11 == 0
@@ -50,7 +63,7 @@ class Blackjack
         action = gets.chomp.to_i
 
         if action == 1
-          @player.draw_player(@deck)
+          @player.draw_player(deck)
           @player_point = point_player
 
           if @count_11 == 0
@@ -79,7 +92,7 @@ class Blackjack
       if @player_bust_flag == 0
 
         while @dealer_point <= DEALER_DRAW_NUMBER
-          @dealer.draw_dealer(@deck)
+          @dealer.draw(deck)
           @dealer_point = point_dealer
 
           bust_check
@@ -138,23 +151,23 @@ class Blackjack
     @player.hands_show_player
     @player_point = point_player
 
-    player_point_information4
+    player_point_information4 # あなたの手札の合計点数は#{@player_point}です。
 
     if @dealer_point == @player_point
-      information8
+      information8 # 合計得点が同点となりました。引き分けです。
       @money_show = @player.paid_money(@bet)
 
     elsif @player_point == BLACK_JACK
-      information9
+      information9 # ブラックジャック！おめでとうございます。あなたの勝ちです。
       @paid = @bet + @bet*RATE
       @money_show = @player.paid_money(@paid.floor)
-      money_information1
+      money_information # "支払い金額 ： #{@paid}円"
 
     elsif @dealer_bust_flag == 1
-      information10
+      information10 # ディーラーがバーストしました。おめでとうございます。あなたの勝ちです！
       @paid = @bet + @bet
       @money_show = @player.paid_money(@paid.floor)
-      money_information2
+      money_information # "支払い金額 ： #{@paid}円"
 
     elsif @dealer_point > @player_point
       information11
@@ -163,22 +176,29 @@ class Blackjack
       information12
       @paid = @bet + @bet
       @money_show = @player.paid_money(@paid.floor)
-      money_information3
+      money_information # puts "支払い金額 ： #{@paid}円"
 
     end
   end
 
   private
-    def build_player
-      @player = Player.new
-    end
+    
+    # def build_deck
+    #   p @deck = Deck.new
+    # end
 
-    def build_deck
-      @deck = Deck.new
-    end
-
-    def build_dealer
-      @dealer = Dealer.new
+    def request_bet(player)
+      request_bet_message(player)
+      loop do
+        player.decide_bet
+        if player.bet.between?(1, player.money)
+          player.bet_money
+          info_bet_money_and_remaining_money #賭け金と残り所持金を表示
+          break
+        else
+          error_message_for_bet_money # 1以上，かつ所持金以下の数値を入力してください
+        end
+      end
     end
 
     def point_player
@@ -231,28 +251,13 @@ class Blackjack
     end
 
     def point(card)
-      if card.number == "J" || card.number == "Q" || card.number == "K"
-        return number = 10
-      elsif card.number == "A"
-        return number = 0
+      case card.number
+      when "J" || card.number == "Q" || card.number == "K"
+        number = 10
+      when "A"
+        number = 1
       else
-        return card.number.to_i
-      end
-    end
-
-    def request_bet(player)
-      while true
-        @bet = gets.chomp.to_i
-
-        if @bet.between?(1, player.money)
-          @money_show = player.bet_money(@bet)
-          money_information4
-
-          break
-        else
-          information14
-
-        end
+        card.number.to_i
       end
     end
 end

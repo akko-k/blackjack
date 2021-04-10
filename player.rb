@@ -1,27 +1,26 @@
 class Player
-  @@money = 100000
+  attr_reader :hands, :money, :bet
 
-  def initialize
+  
+
+  def initialize(money)
     @hands = []
+    @money = money
   end
 
-  def hands
-    @hands
+  def decide_bet
+    @bet = gets.chomp.to_i
   end
 
-  def money
-    @@money
-  end
-
-  def bet_money(money)
-    @@money -= money
+  def bet_money
+    @money -= @bet
   end
 
   def paid_money(money)
-    @@money += money
+    @money += money
   end
 
-  def first_draw_player(deck)
+  def first_draw(deck)
     card = deck.draw
     @hands << card
     card = deck.draw

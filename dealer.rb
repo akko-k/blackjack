@@ -1,17 +1,13 @@
 class Dealer
+  attr_reader :hands
 
   def initialize
     @hands = []
   end
 
-  def hands
-    @hands
-  end
+  def first_draw(deck)
+    draw(deck)
 
-  def first_draw_dealer(deck)
-
-    card = deck.draw
-    @hands << card
     puts <<~text
 
     ------------Dealer手札------------
@@ -20,14 +16,11 @@ class Dealer
     ----------------------------------
     text
 
-    card = deck.draw
-    @hands << card
-
   end
 
-  def draw_dealer(deck)
-    card = deck.draw
-    @hands << card
+  def draw(deck)
+    draw_card = deck.pop(2)
+    @hands << draw_card
   end
 
   def hands_show_dealer

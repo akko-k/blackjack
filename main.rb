@@ -1,5 +1,11 @@
 require "./blackjack"
+require "./Player"
 
-blackjack = Blackjack.new
+player_money = Blackjack.request_player_to_enter_money
 
-blackjack.start
+player = Player.new(player_money)
+dealer = Dealer.new
+
+blackjack = Blackjack.new(player,dealer)
+
+blackjack.start(player_money)

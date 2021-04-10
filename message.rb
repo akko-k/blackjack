@@ -11,7 +11,7 @@ module Message
     text
   end
 
-  def disp_money(player)
+  def request_bet_message(player)
     puts <<~text
 
       現在の所持金は#{player.money}円です。
@@ -91,7 +91,7 @@ module Message
 
   def continue_or_end_message
     puts <<~text
-        現在の所持金 ： #{@money_show}円
+        現在の所持金 ： #{player.remaining_money}円
         ----------------------------------
 
         1.ゲームを続ける 2.ゲームをやめる
@@ -158,9 +158,9 @@ module Message
       text
   end
 
-  def money_information1
+  def money_information
     puts "---------money_information--------"
-    puts "支払い金額 ： #{@paid}円"
+    puts "支払われる金額 ： #{@paid}円"
   end
 
   def information10
@@ -171,11 +171,6 @@ module Message
       おめでとうございます。あなたの勝ちです！
 
       text
-  end
-
-  def money_information2
-    puts "---------money_information--------"
-      puts "支払い金額 ： #{@paid}円"
   end
 
   def information11
@@ -197,11 +192,6 @@ module Message
       text
   end
 
-  def money_information3
-    puts "---------money_information--------"
-      puts "支払い金額 ： #{@paid}円"
-  end
-
   def information13
     puts <<~text
 
@@ -212,25 +202,24 @@ module Message
     text
   end
 
-  def money_information4
+  def info_bet_money_and_remaining_money
     puts <<~text
 
           ---------money_information--------
-          掛け金 ： #{@bet}円
-          残り所持金 ： #{@money_show}円
+          掛け金： #{@player.bet}円
+          残り所持金 ： #{@player.money}円
           ----------------------------------
 
           text
   end
 
-  def information14
+  def error_message_for_bet_money
     puts <<~text
 
           ----------------------------------
-          error ： 所持金以下の数値を入力してください
+          error ： 1以上，かつ所持金以下の数値を入力してください
           ----------------------------------
 
           text
   end
-
 end
