@@ -7,8 +7,8 @@ class Deck
     @cards = []
 
     marks = ["♤", "♡", "♢", "♧"]
-    numbers = ["A", "10", "J", "Q" ,"K"]
-    # numbers = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q" ,"K"]
+    # numbers = ["A", "10", "J", "Q" ,"K"]
+    numbers = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q" ,"K"]
     marks.each do |mark|
       numbers.each do |number|
         # markとnumberの組み合わせを一つずつcardクラスに渡し、それぞれのcardオブジェクトを生成する

@@ -42,7 +42,6 @@ class Blackjack
       @dealer.show_hand_first_time
       @player.show_hand(@player)
       players_sum_of_points = calculate_points(@player)
-
       info(players_sum_of_points)
 
       # --------------------------------
@@ -51,17 +50,19 @@ class Blackjack
 
 
       while true
-
+        request_to_select_action_message
         players_action = gets.chomp.to_i
 
         if players_action == 1
-          @player.draw_player(deck)
-          @players_point = point_player
+          deal_card_to(@player)
+          @player.show_hand(@player)
+          sum_of_points = calculate_points(@player)
+          info(sum_of_points)
 
           if @count_11 == 0
-            player_point_information1
+            info(sum_of_points)
           else
-            player_point_information2
+            info_when_includeing_11(sum_of_points)
           end
 
           bust_check
@@ -192,14 +193,16 @@ class Blackjack
     def deal_cards_first_time
       dealer_deals_cards_message
       2.times do
-        # プレイヤーに1枚配る
-        dealt_players_card = @dealer.deals_card(@deck)
-        @player.receive(dealt_players_card)
-        # ディーラー自身に1枚配る
-        dealt_dealers_card = @dealer.deals_card(@deck)
-        @dealer.receive(dealt_dealers_card)
+        deal_card_to(@player)
+        deal_card_to(@dealer)
       end
     end
+    
+    def deal_card_to(character)
+        drawn_card = @dealer.draw_card(@deck)
+        character.receive(drawn_card)
+    end
+
 
     def calculate_points(character)
       sum_of_points = 0

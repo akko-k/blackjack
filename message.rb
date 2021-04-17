@@ -51,18 +51,18 @@ module Message
 
   end
 
-  def info(players_sum_of_points)
-    puts "あなたの手札の合計点数は#{players_sum_of_points}です。"
+  def info(sum_of_points)
+    puts "あなたの手札の合計点数は#{sum_of_points}です。"
   end
 
-  def info_players_points
+  def info_when_includeing_11(sum_of_points)
     puts <<~text
-        あなたの手札の合計点数は#{@player_points}、もしくは#{@player_points - 10}です。
+        あなたの手札の合計点数は#{sum_of_points}、もしくは#{sum_of_points - 10}です。
         ----------------------------------
         text
   end
 
-  def information2
+  def request_to_select_action_message
     puts <<~text
 
         あなたの行動を選択してください

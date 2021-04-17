@@ -5,8 +5,8 @@ class Dealer < Character
     @hand = []
   end
 
-  # 1枚カードを配る
-  def deals_card(deck)
+  # 1枚カードを引く
+  def draw_card(deck)
     deck.cards.pop
   end
 
