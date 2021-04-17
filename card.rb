@@ -6,8 +6,7 @@ class Card
     @number = number
   end
 
-  def show
+  def card_info
     return "#{@mark} #{@number}"
   end
-
 end

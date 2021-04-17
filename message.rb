@@ -11,35 +11,53 @@ module Message
     text
   end
 
-  def request_bet_message(player)
+  def request_plyaer_to_decide_bet_message
     puts <<~text
 
-      現在の所持金は#{player.money}円です。
+      現在の所持金は#{@player.money}円です。
       掛け金を入力して下さい。
 
       text
   end
 
-  def information1
+  def info_bet_money_and_remaining_money
     puts <<~text
 
-      まずはディーラー、プレイヤー共に
-      デッキからカードを2枚引きます
+          ---------money_information--------
+          掛け金： #{@bet}円
+          残り所持金 ： #{@player.money}円
+          ----------------------------------
+
+          text
+  end
+
+  def error_message_for_bet_money
+    puts <<~text
+
+          ----------------------------------
+          error ： 1以上，かつ所持金以下の数値を入力してください
+          ----------------------------------
+
+          text
+  end
+
+  def dealer_deals_cards_message
+    puts <<~text
+
+      ディーラーがカードを
+      2枚ずつ配ります
 
       text
 
   end
 
-  def player_point_information1
-    puts <<~text
-        あなたの手札の合計点数は#{@player_point}です。
-        ----------------------------------
-        text
+  def info(players_sum_of_points)
+    puts "あなたの手札の合計点数は#{players_sum_of_points}です。"
   end
 
-  def player_point_information2
+  def info_players_points
     puts <<~text
-        あなたの手札の合計点数は#{@player_point}、もしくは#{@player_point-10}です。
+        あなたの手札の合計点数は#{@player_points}、もしくは#{@player_points - 10}です。
         ----------------------------------
         text
   end
@@ -200,26 +218,5 @@ module Message
 
     ---------money_information--------
     text
-  end
-
-  def info_bet_money_and_remaining_money
-    puts <<~text
-
-          ---------money_information--------
-          掛け金： #{@player.bet}円
-          残り所持金 ： #{@player.money}円
-          ----------------------------------
-
-          text
-  end
-
-  def error_message_for_bet_money
-    puts <<~text
-
-          ----------------------------------
-          error ： 1以上，かつ所持金以下の数値を入力してください
-          ----------------------------------
-
-          text
   end
 end

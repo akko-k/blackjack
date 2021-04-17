@@ -5,15 +5,14 @@ require "./dealer"
 require "./message"
 
 class Blackjack
-
   include Message
 
   BUST_NUMBER = 22
   BLACK_JACK = 21
-  DEALER_DRAW_NUMBER = 16
-  RATE = 1.5
+  DEALER_DRAW_NUMBER = 17
+  RATE = 2.5
 
-  def self.request_player_to_enter_money
+  def self.request_player_to_check_money
     puts "所持金を入力して下さい。"
     money = 0
     loop do
@@ -29,42 +28,35 @@ class Blackjack
     @dealer = dealer
   end
 
-  def start(player_money)
+  def start
 
     start_message
-
+    @deck = Deck.new
+    
     while true
-      request_bet(@player)
+  
+      request_player_to_bet
+
+      deal_cards_first_time
       
-      p deck = Deck.new
-      
-      @count_11 = 0
-      @count_11_dealer = 0
+      @dealer.show_hand_first_time
+      @player.show_hand(@player)
+      players_sum_of_points = calculate_points(@player)
+
+      info(players_sum_of_points)
+
+      # --------------------------------
       @player_bust_flag = 0
       @dealer_bust_flag = 0
 
-      information1
-
-      @dealer.first_draw(deck)
-      @dealer_point = point_dealer
-      @player.first_draw(deck)
-      @player_point = point_player
-
-      if @count_11 == 0
-        player_point_information1
-      else
-        player_point_information2
-      end
 
       while true
 
-        information2
+        players_action = gets.chomp.to_i
 
-        action = gets.chomp.to_i
-
-        if action == 1
+        if players_action == 1
           @player.draw_player(deck)
-          @player_point = point_player
+          @players_point = point_player
 
           if @count_11 == 0
             player_point_information1
@@ -79,7 +71,7 @@ class Blackjack
             break
           end
 
-        elsif action == 2
+        elsif players_action == 2
           break
 
         else
@@ -183,81 +175,66 @@ class Blackjack
 
   private
     
-    # def build_deck
-    #   p @deck = Deck.new
-    # end
-
-    def request_bet(player)
-      request_bet_message(player)
+    def request_player_to_bet
+      request_plyaer_to_decide_bet_message
       loop do
-        player.decide_bet
-        if player.bet.between?(1, player.money)
-          player.bet_money
+        @bet = gets.chomp.to_i
+        if @bet.between?(1, @player.money)
+          @player.bet_money(@bet)
           info_bet_money_and_remaining_money #賭け金と残り所持金を表示
           break
-        else
-          error_message_for_bet_money # 1以上，かつ所持金以下の数値を入力してください
         end
+        error_message_for_bet_money # 1以上，かつ所持金以下の数値を入力してください
       end
     end
 
-    def point_player
-      player_point = 0
-      count_a = 0
+    # 配り方はプレイヤー1枚目→ディーラー1枚目（見せる）→プレイヤー2枚目→ディーラー2枚目（伏せる）
+    def deal_cards_first_time
+      dealer_deals_cards_message
+      2.times do
+        # プレイヤーに1枚配る
+        dealt_players_card = @dealer.deals_card(@deck)
+        @player.receive(dealt_players_card)
+        # ディーラー自身に1枚配る
+        dealt_dealers_card = @dealer.deals_card(@deck)
+        @dealer.receive(dealt_dealers_card)
+      end
+    end
 
-      @player.hands.each do |hand|
-        player_point += point(hand)
-        #「A」が何回出たかを計算
-        if point(hand) == 0
+    def calculate_points(character)
+      sum_of_points = 0
+      count_a = 0
+      @count_11 = 0
+
+      # とりあえずAを0とカウント
+      character.hand.each do |card|
+        sum_of_points += convert_to_point(card)
+        #「A」が何回出たかを割り出す
+        if convert_to_point(card) == 0
           count_a += 1
         end
       end
 
-      count_a.times do |i|
-        if player_point <= 10
-          player_point += 11
-          @count_11 = 1
+      count_a.times do |count|
+        if sum_of_points <= 10
+          sum_of_points += 11
+          @count_11 += 1
         else
-          player_point += 1
-          @count_11 = 0
+          sum_of_points += 1
         end
       end
+      sum_of_points
+  end
 
-      return player_point
+  def convert_to_point(card)
+    case card.number
+    when "J" , "Q" , "K"
+      point = 10
+    when "A"
+      point = 0
+    else
+      point = card.number.to_i
     end
-
-    def point_dealer
-      dealer_point = 0
-      count_a = 0
-
-      @dealer.hands.each do |hand|
-        dealer_point += point(hand)
-        if point(hand) == 0
-          count_a += 1
-        end
-      end
-
-      count_a.times do |i|
-        if dealer_point <= 10
-          dealer_point += 11
-          @count_11_dealer = 1
-        else
-          dealer_point += 1
-          @count_11_dealer = 0
-        end
-      end
-
-      dealer_point
-    end
-
-    def point(card)
-      case card.number
-      when "J" || card.number == "Q" || card.number == "K"
-        number = 10
-      when "A"
-        number = 1
-      else
-        card.number.to_i
-      end
-    end
+    point
+  end
 end
