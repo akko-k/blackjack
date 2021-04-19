@@ -6,238 +6,116 @@ require "./message"
 
 class Blackjack
   include Message
-
+  NUM_TO_ADJUST_POINTS_WHEN_INCLUDING_A = 10
+  HIT_NUM = 1
+  STAND_NUM = 2
   BUST_NUMBER = 22
   BLACK_JACK = 21
   DEALER_DRAW_NUMBER = 17
   RATE = 2.5
 
   def self.request_player_to_check_money
+    player_money = 0
     puts "所持金を入力して下さい。"
-    money = 0
     loop do
-      money = gets.to_i
-      break if money >= 1
+      player_money = Player.check_money
+      break if player_money >= 1
       puts "1円以上でゲームに参加してください"
     end
-    money
+    player_money
   end
 
-  def initialize(player,dealer)
+  def initialize(player, dealer)
     @player = player
     @dealer = dealer
   end
 
   def start
-
     start_message
     @deck = Deck.new
-    
-    while true
-  
+
+    while true #ゲーム自体の仕切り直し
+      
+      reset_hand(@dealer)
+      reset_hand(@player)
+      p @deck.cards.size
       request_player_to_bet
 
-      deal_cards_first_time
-      
-      @dealer.show_hand_first_time
-      @player.show_hand(@player)
-      players_sum_of_points = calculate_points(@player)
-      info(players_sum_of_points)
-
-      # --------------------------------
-      @player_bust_flag = 0
-      @dealer_bust_flag = 0
-
-
-      while true
-        request_to_select_action_message
-        players_action = gets.chomp.to_i
-
-        if players_action == 1
-          deal_card_to(@player)
-          @player.show_hand(@player)
-          sum_of_points = calculate_points(@player)
-          info(sum_of_points)
-
-          if @count_11 == 0
-            info(sum_of_points)
-          else
-            info_when_includeing_11(sum_of_points)
-          end
-
-          bust_check
-
-          if @player_bust_flag == 1
-            information13
-            break
-          end
-
-        elsif players_action == 2
-          break
-
-        else
-          information3
-
-        end
-
-      end
-
-      if @player_bust_flag == 0
-
-        while @dealer_point <= DEALER_DRAW_NUMBER
-          @dealer.draw(deck)
-          @dealer_point = point_dealer
-
-          bust_check
-
-        end
-
-        information4
-
-        judge
-
-      end
-
-      if @player.money <= 0
-        end_message
-        break
-
-      else
-
-        continue_or_end_message
-
-        continue = gets.chomp.to_i
-
-        if continue == 1
-          information5
-
-        elsif continue == 2
-           information6
-          break
-
-        else
-
-          information7
-
-        end
-      end
-    end
-  end
-
-  def bust_check
-    if @player_point >= BUST_NUMBER
-      @player_bust_flag = 1
-
-    elsif @dealer_point >= BUST_NUMBER
-      @dealer_bust_flag = 1
-
-    end
-  end
-
-  def judge
-
-    @dealer.hands_show_dealer
-    @dealer_point = point_dealer
-
-    dealer_point_information1
-
-    @player.hands_show_player
-    @player_point = point_player
-
-    player_point_information4 # あなたの手札の合計点数は#{@player_point}です。
-
-    if @dealer_point == @player_point
-      information8 # 合計得点が同点となりました。引き分けです。
-      @money_show = @player.paid_money(@bet)
-
-    elsif @player_point == BLACK_JACK
-      information9 # ブラックジャック！おめでとうございます。あなたの勝ちです。
-      @paid = @bet + @bet*RATE
-      @money_show = @player.paid_money(@paid.floor)
-      money_information # "支払い金額 ： #{@paid}円"
-
-    elsif @dealer_bust_flag == 1
-      information10 # ディーラーがバーストしました。おめでとうございます。あなたの勝ちです！
-      @paid = @bet + @bet
-      @money_show = @player.paid_money(@paid.floor)
-      money_information # "支払い金額 ： #{@paid}円"
-
-    elsif @dealer_point > @player_point
-      information11
-
-    else
-      information12
-      @paid = @bet + @bet
-      @money_show = @player.paid_money(@paid.floor)
-      money_information # puts "支払い金額 ： #{@paid}円"
-
-    end
-  end
-
-  private
-    
-    def request_player_to_bet
-      request_plyaer_to_decide_bet_message
-      loop do
-        @bet = gets.chomp.to_i
-        if @bet.between?(1, @player.money)
-          @player.bet_money(@bet)
-          info_bet_money_and_remaining_money #賭け金と残り所持金を表示
-          break
-        end
-        error_message_for_bet_money # 1以上，かつ所持金以下の数値を入力してください
-      end
-    end
-
-    # 配り方はプレイヤー1枚目→ディーラー1枚目（見せる）→プレイヤー2枚目→ディーラー2枚目（伏せる）
-    def deal_cards_first_time
+      # 配り方はプレイヤー1枚目→ディーラー1枚目（見せる）→プレイヤー2枚目→ディーラー2枚目（伏せる）
       dealer_deals_cards_message
       2.times do
         deal_card_to(@player)
         deal_card_to(@dealer)
       end
-    end
-    
-    def deal_card_to(character)
-        drawn_card = @dealer.draw_card(@deck)
-        character.receive(drawn_card)
-    end
-
-
-    def calculate_points(character)
-      sum_of_points = 0
-      count_a = 0
-      @count_11 = 0
-
-      # とりあえずAを0とカウント
-      character.hand.each do |card|
-        sum_of_points += convert_to_point(card)
-        #「A」が何回出たかを割り出す
-        if convert_to_point(card) == 0
-          count_a += 1
-        end
+      @dealer.show_hand
+      @player.show_hand
+      sum_of_points = @player.calculate_points(num_to_adjust_points_when_including_a: NUM_TO_ADJUST_POINTS_WHEN_INCLUDING_A)
+      info_sum_of_points_message(@player,sum_of_points)
+      
+      if @player.sum_of_points == BLACK_JACK
+        @player.put_up_brackjack_flag
       end
+      
+      until @player.brackjack_flag == true #ゲームの中でカードを追加するかどうか
+        players_select_action_num = request_player_to_select_hit_or_stand
+        
+        case players_select_action_num
+        when HIT_NUM
+          deal_card_to(@player)
+          @player.show_hand
+          sum_of_points = @player.calculate_points(num_to_adjust_points_when_including_a: NUM_TO_ADJUST_POINTS_WHEN_INCLUDING_A)
+          info_sum_of_points_message(@player,sum_of_points)
 
-      count_a.times do |count|
-        if sum_of_points <= 10
-          sum_of_points += 11
-          @count_11 += 1
-        else
-          sum_of_points += 1
+          if bust?(@player, sum_of_points)
+            info_bust_message(@player)
+            @player.put_up_bust_flag
+            break
+          end
+        when  STAND_NUM
+          break
         end
-      end
-      sum_of_points
+      end #playerの追加が終わり
+
+      
+    end # 1回のゲームが終わり（勝敗，精算まで）
+  end #startの終わり
+
+  private
+
+  def reset_hand(character)
+    character.reset_hand(character)
   end
 
-  def convert_to_point(card)
-    case card.number
-    when "J" , "Q" , "K"
-      point = 10
-    when "A"
-      point = 0
-    else
-      point = card.number.to_i
+  def request_player_to_bet
+    request_plyaer_to_decide_bet_message
+    loop do
+      @bet = gets.chomp.to_i
+      if @bet.between?(1, @player.money)
+        @player.bet_money(@bet)
+        info_bet_money_and_remaining_money #賭け金と残り所持金を表示
+        break
+      end
+      error_message_for_bet_money # 1以上，かつ所持金以下の数値を入力してください
     end
-    point
+  end
+
+  def deal_card_to(character)
+    drawn_card = @dealer.draw_card(@deck)
+    character.receive(drawn_card)
+  end
+
+  def bust?(character, sum_of_points)
+    BUST_NUMBER <= sum_of_points[0]
+  end
+
+  def request_player_to_select_hit_or_stand
+    request_to_select_hit_or_stand_message(hit_num: HIT_NUM, stnad_num: STAND_NUM)
+    players_select_action_num = 0
+    loop do
+      players_select_action_num = @player.select_hit_or_stand
+      break if players_select_action_num == HIT_NUM || players_select_action_num == STAND_NUM
+      error_message_about_select_action_num
+    end
+    players_select_action_num
   end
 end

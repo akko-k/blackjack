@@ -51,35 +51,34 @@ module Message
 
   end
 
-  def info(sum_of_points)
-    puts "あなたの手札の合計点数は#{sum_of_points}です。"
+  
+
+  def info_sum_of_points_message(character, sum_of_points)
+    if sum_of_points.size == 1
+      puts "#{character.class}の手札の合計点数は #{sum_of_points[0]} です。"
+    else
+      puts "#{character.class}の手札の合計点数は #{sum_of_points[0]}、もしくは #{sum_of_points[1]} です。"
+    end
   end
 
-  def info_when_includeing_11(sum_of_points)
-    puts <<~text
-        あなたの手札の合計点数は#{sum_of_points}、もしくは#{sum_of_points - 10}です。
-        ----------------------------------
-        text
-  end
-
-  def request_to_select_action_message
+  def request_to_select_hit_or_stand_message(hit_num: HIT_NUM, stnad_num:STAND_NUM)
     puts <<~text
 
         あなたの行動を選択してください
 
-        1.Hit 2.Stand
+        #{hit_num}.Hit #{stnad_num}.Stand
 
         text
   end
 
   def player_point_information3
     puts <<~text
-          あなたの手札の合計点数は#{@player_point}です。
+          手札の合計点数は#{@player_point}です。
           ----------------------------------
           text
   end
 
-  def information3
+  def error_message_about_select_action_num
     puts <<~text
           ----------------------------------
           error ： 1か2を入力してください
@@ -109,7 +108,7 @@ module Message
 
   def continue_or_end_message
     puts <<~text
-        現在の所持金 ： #{player.remaining_money}円
+        現在の所持金 ： #{@player.money}円
         ----------------------------------
 
         1.ゲームを続ける 2.ゲームをやめる
@@ -143,16 +142,16 @@ module Message
           text
   end
 
-  def dealer_point_information1
-    puts <<~text
-    ディーラーの手札の合計点数は#{@dealer_point}です。
-    ----------------------------------
-    text
-  end
+  # def dealer_point_information1
+  #   puts <<~text
+  #   ディーラーの手札の合計点数は#{@dealer_point}です。
+  #   ----------------------------------
+  #   text
+  # end
 
   def player_point_information4
     puts <<~text
-    あなたの手札の合計点数は#{@player_point}です。
+    手札の合計点数は#{@player_point}です。
     ----------------------------------
     text
   end
@@ -210,13 +209,12 @@ module Message
       text
   end
 
-  def information13
+  def info_bust_message(character)
     puts <<~text
 
+    #{character.class}がバーストしました。
+    #{character.class}の負けです
 
-    バーストしました。あなたの負けです
-
-    ---------money_information--------
     text
   end
 end

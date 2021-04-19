@@ -10,14 +10,27 @@ class Dealer < Character
     deck.cards.pop
   end
 
-  def show_hand_first_time
-    puts <<~text
+  def show_hand
+    i = 0
 
-        ------------Dealer 手札------------
-        1枚目 ： #{@hand[0].card_info}
-        2枚目 ： 伏せられている
-        -----------------------------------
+    if i == 0
+      puts <<~text
 
-         text
+          ------------#{self.class} 手札------------
+          1枚目 ： #{@hand[0].card_info}
+          2枚目 ： 伏せられている
+          -----------------------------------
+          text
+    else
+      puts <<~text
+
+          ------------#{self.class} 手札------------
+          text
+        @hand.each.with_index(1) do |card, i|
+          puts " #{i}枚目 ： #{card.card_info}"
+        end
+      puts "-----------------------------------"
+  end
+    i += 1
   end
 end
