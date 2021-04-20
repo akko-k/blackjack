@@ -7,8 +7,9 @@ class Deck
     @cards = []
 
     marks = ["♤", "♡", "♢", "♧"]
-    # numbers = ["A", "10", "J", "Q" ,"K"]
-    numbers = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q" ,"K"]
+    # numbers = ["10", "7", "Q", "4","A"] #シャッフルなしでプレイヤーがブラックジャックになる
+    numbers = ["10", "Q", "4", "A","7"] #シャッフルなしでディーラーがブラックジャックになる
+    # numbers = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q" ,"K"]
     marks.each do |mark|
       numbers.each do |number|
         # markとnumberの組み合わせを一つずつcardクラスに渡し、それぞれのcardオブジェクトを生成する
@@ -17,7 +18,7 @@ class Deck
         @cards << card
       end
     end
-    @cards.shuffle!
+    @cards#.shuffle!
   end
 end
 

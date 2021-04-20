@@ -5,22 +5,28 @@ require "./dealer"
 require "./message"
 
 class Blackjack
-  include Message
-  NUM_TO_ADJUST_POINTS_WHEN_INCLUDING_A = 10
   HIT_NUM = 1
   STAND_NUM = 2
-  BUST_NUMBER = 22
+  BUST_NUM = 22
   BLACK_JACK = 21
-  DEALER_DRAW_NUMBER = 17
+  DEALER_DRAW_NUM = 17
   RATE = 2.5
 
+  include Message
+  
   def self.request_player_to_check_money
     player_money = 0
     puts "所持金を入力して下さい。"
     loop do
       player_money = Player.check_money
       break if player_money >= 1
-      puts "1円以上でゲームに参加してください"
+      puts <<~text
+
+          ---------------------------------------------
+          error ： 1円以上でゲームに参加してください。
+          ---------------------------------------------
+
+          text
     end
     player_money
   end
@@ -30,60 +36,39 @@ class Blackjack
     @dealer = dealer
   end
 
-  def start
+  def deal_cards
     start_message
     @deck = Deck.new
 
-    while true #ゲーム自体の仕切り直し
+    loop do #ゲーム自体の仕切り直し
       
-      reset_hand(@dealer)
-      reset_hand(@player)
-      p @deck.cards.size
+      @dealer.init
+      @player.init
+
       request_player_to_bet
 
-      # 配り方はプレイヤー1枚目→ディーラー1枚目（見せる）→プレイヤー2枚目→ディーラー2枚目（伏せる）
-      dealer_deals_cards_message
-      2.times do
-        deal_card_to(@player)
-        deal_card_to(@dealer)
+      deal_cards_first_time
+
+      if @player.points_list[0] == BLACK_JACK
+        info_blackjack_message(@player)
+        @player.set_blackjack
+      else
+        info_points_message(@player)
+        start_players_turn
       end
-      @dealer.show_hand
-      @player.show_hand
-      sum_of_points = @player.calculate_points(num_to_adjust_points_when_including_a: NUM_TO_ADJUST_POINTS_WHEN_INCLUDING_A)
-      info_sum_of_points_message(@player,sum_of_points)
-      
-      if @player.sum_of_points == BLACK_JACK
-        @player.put_up_brackjack_flag
+
+      # プレイヤーがバーストしていなければディーラーの番
+      if @player.bust == false
+        start_dealers_turn
       end
-      
-      until @player.brackjack_flag == true #ゲームの中でカードを追加するかどうか
-        players_select_action_num = request_player_to_select_hit_or_stand
-        
-        case players_select_action_num
-        when HIT_NUM
-          deal_card_to(@player)
-          @player.show_hand
-          sum_of_points = @player.calculate_points(num_to_adjust_points_when_including_a: NUM_TO_ADJUST_POINTS_WHEN_INCLUDING_A)
-          info_sum_of_points_message(@player,sum_of_points)
 
-          if bust?(@player, sum_of_points)
-            info_bust_message(@player)
-            @player.put_up_bust_flag
-            break
-          end
-        when  STAND_NUM
-          break
-        end
-      end #playerの追加が終わり
+      # 両者バーストしてなければ，ポイント比較による勝敗判定
+      if @player.bust == false && @dealer.bust == false
+        judge_winner_by_points
+      end
 
       
-    end # 1回のゲームが終わり（勝敗，精算まで）
-  end #startの終わり
-
-  private
-
-  def reset_hand(character)
-    character.reset_hand(character)
+    end 
   end
 
   def request_player_to_bet
@@ -99,23 +84,125 @@ class Blackjack
     end
   end
 
+  def deal_cards_first_time
+    # 配り方はプレイヤー1枚目→ディーラー1枚目（見せる）→プレイヤー2枚目→ディーラー2枚目（伏せる）
+    dealer_deals_cards_message(@dealer)
+    2.times do
+      deal_card_to(@player)
+      deal_card_to(@dealer)
+    end
+    @dealer.show_hand_first_deal
+    @player.show_hand
+    @player.calculate_points
+  end
+
   def deal_card_to(character)
     drawn_card = @dealer.draw_card(@deck)
     character.receive(drawn_card)
   end
 
-  def bust?(character, sum_of_points)
-    BUST_NUMBER <= sum_of_points[0]
+  # プレイヤーの番
+  def start_players_turn
+    loop do
+      action_num = request_player_to_select_hit_or_stand
+      
+      case action_num
+      when STAND_NUM
+        info_end_of_players_turn_message
+        break
+      when HIT_NUM
+        deal_card_to(@player)
+        @player.show_hand
+        @player.calculate_points
+        info_points_message(@player)
+
+        if BUST_NUM <= @player.points_list[0]
+          info_bust_message(@player)
+          @player.set_bust
+          @player.set_loss
+          player_lose_message
+          return
+        end
+      end
+    end
   end
 
   def request_player_to_select_hit_or_stand
-    request_to_select_hit_or_stand_message(hit_num: HIT_NUM, stnad_num: STAND_NUM)
-    players_select_action_num = 0
+    request_to_select_hit_or_stand_message(hit_num: HIT_NUM, stand_num: STAND_NUM)
+    action_num = 0
     loop do
-      players_select_action_num = @player.select_hit_or_stand
-      break if players_select_action_num == HIT_NUM || players_select_action_num == STAND_NUM
-      error_message_about_select_action_num
+      action_num = @player.select_hit_or_stand
+      break if action_num == HIT_NUM || action_num == STAND_NUM
+      error_message_about_select_action_num(hit_num: HIT_NUM, stand_num: STAND_NUM)
     end
-    players_select_action_num
+    action_num
+  end
+
+  # ディーラーの番
+  def start_dealers_turn   
+    # 1回目に配ったカードを見せる
+    check_dealers_first_hand_message
+    @dealer.show_hand
+    @dealer.calculate_points
+    
+
+    # 最初の2枚がブラックジャックならフラグを立てる
+    if @dealer.points_list[0] == BLACK_JACK
+      info_blackjack_message(@dealer)
+      @dealer.set_blackjack
+    else
+      info_points_message(@dealer)
+    end
+
+    return if @player.blackjack == true
+
+    # 17未満の間はカードを引く
+    while @dealer.points_list[0] < DEALER_DRAW_NUM
+      info_dealer_drow_card(dealer_draw_num: DEALER_DRAW_NUM)
+      deal_card_to(@dealer)
+      @dealer.show_hand
+      @dealer.calculate_points
+      info_points_message(@dealer)
+    end
+    
+    if DEALER_DRAW_NUM <= @dealer.points_list[0] && @dealer.points_list[0] < BUST_NUM
+      return
+    elsif BUST_NUM <= @dealer.points_list[0]
+      info_bust_message(@dealer)
+      @dealer.set_bust
+      @dealer.set_loss
+      player_win_message
+    end
+  end
+
+  def judge_winner_by_points
+    compare_points_message
+    @player.show_hand
+    @player.blackjack == false ? info_points_message(@player) : info_blackjack_message(@player)
+    @dealer.show_hand
+    @dealer.blackjack == false ? info_points_message(@dealer) : info_blackjack_message(@dealer)
+    
+
+    if @dealer.points_list[0] < @player.points_list[0]
+      player_win_message
+      @dealer.set_loss
+    elsif @player.points_list[0] < @dealer.points_list[0]
+      player_lose_message
+      @player.set_loss
+    else
+      judge_winner_when_points_are_same
+    end
+  end
+end
+
+def judge_winner_when_points_are_same
+  if @player.blackjack == true && @dealer.blackjack == false
+    player_win_message
+    @dealer.set_loss
+  elsif @player.blackjack == false && @dealer.blackjack == true
+    player_lose_message
+    @player.set_loss
+  else
+    end_in_tie_message
   end
 end

@@ -1,8 +1,13 @@
 class Character
-  attr_reader :hand, :sum_of_points, :sum_of_point_when_includeing_11, :losing_flag_due_to_burst, :brackjack_flag
+  attr_reader :hand, :points_list, :bust, :blackjack, :loss
 
-  def reset_hand(character)
+  NUM_TO_ADJUST_POINTS_INCLUDING_A = 10
+
+  def init
     @hand = []
+    @bust = false
+    @blackjack = false
+    @loss = false
   end
 
   # 配られたカードを手札に加える
@@ -10,14 +15,14 @@ class Character
     @hand << dealt_card
   end
 
-  def calculate_points(num_to_adjust_points_when_including_a: NUM_TO_ADJUST_POINTS_WHEN_INCLUDING_A)
-    sum_of_points = 0
+  def calculate_points
+    points_sum = 0
     count_a = 0
     count_11 = 0
 
-    # とりあえずAを0とカウント
+    # Aを0とカウント
     @hand.each do |card|
-      sum_of_points += convert_to_point(card)
+      points_sum += convert_to_point(card)
       #「A」が何回出たか
       if convert_to_point(card) == 0
         count_a += 1
@@ -25,18 +30,18 @@ class Character
     end
 
     count_a.times do |count|
-      if sum_of_points <= num_to_adjust_points_when_including_a
-        sum_of_points += 11
+      if points_sum <= NUM_TO_ADJUST_POINTS_INCLUDING_A
+        points_sum += 11
         count_11 += 1
       else
-        sum_of_points += 1
+        points_sum += 1
       end
     end
     
     if count_11 == 0
-      sum_of_points = [sum_of_points] 
+      @points_list = [points_sum] 
     else
-      sum_of_points = [sum_of_points, sum_of_points - num_to_adjust_points_when_including_a] 
+      @points_list = [points_sum, points_sum - NUM_TO_ADJUST_POINTS_INCLUDING_A] 
     end
 
   end
@@ -53,11 +58,15 @@ class Character
     card_point
   end
 
-  def put_up_brackjack_flag
-    @brackjack_flag = true
+  def set_blackjack
+    @blackjack = true
   end
 
-  def put_up_bust_flag
-    @losing_flag_due_to_burst = true
+  def set_bust
+    @bust = true
+  end
+
+  def set_loss
+    @loss = true
   end
 end

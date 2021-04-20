@@ -8,7 +8,6 @@ class Player < Character
 
   def initialize(player_money)
     @money = player_money
-    @hand = []
   end
 
   def bet_money(bet)
@@ -19,7 +18,7 @@ class Player < Character
 
     puts <<~text
 
-          ------------#{self.class} 手札------------
+          ----------- #{self.class} 手札 -----------
           text
     @hand.each.with_index(1) do |card, i|
       puts " #{i}枚目 ： #{card.card_info}"

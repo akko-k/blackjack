@@ -23,7 +23,7 @@ module Message
   def info_bet_money_and_remaining_money
     puts <<~text
 
-          ---------money_information--------
+          -------- money_information -------
           掛け金： #{@bet}円
           残り所持金 ： #{@player.money}円
           ----------------------------------
@@ -34,17 +34,17 @@ module Message
   def error_message_for_bet_money
     puts <<~text
 
-          ----------------------------------
-          error ： 1以上，かつ所持金以下の数値を入力してください
-          ----------------------------------
+          ------------------------------------------------
+          error ： 1以上，かつ所持金以下の数値を入力してください。
+          ------------------------------------------------
 
           text
   end
 
-  def dealer_deals_cards_message
+  def dealer_deals_cards_message(character)
     puts <<~text
 
-      ディーラーがカードを
+      #{character.class}がカードを
       2枚ずつ配ります
 
       text
@@ -52,111 +52,91 @@ module Message
   end
 
   
-
-  def info_sum_of_points_message(character, sum_of_points)
-    if sum_of_points.size == 1
-      puts "#{character.class}の手札の合計点数は #{sum_of_points[0]} です。"
+  def info_points_message(character)
+    if character.points_list.size == 1
+      puts "#{character.class}の手札の合計点数は #{character.points_list[0]} です。"
     else
-      puts "#{character.class}の手札の合計点数は #{sum_of_points[0]}、もしくは #{sum_of_points[1]} です。"
+      puts "#{character.class}の手札の合計点数は #{character.points_list[0]}、もしくは #{character.points_list[1]} です。"
     end
   end
 
-  def request_to_select_hit_or_stand_message(hit_num: HIT_NUM, stnad_num:STAND_NUM)
+  def info_blackjack_message(character)
     puts <<~text
 
-        あなたの行動を選択してください
+      #{character.class}の手札はブラックジャックです！
 
-        #{hit_num}.Hit #{stnad_num}.Stand
+      text
+  end
+
+  def request_to_select_hit_or_stand_message(hit_num: HIT_NUM, stand_num: STAND_NUM)
+    puts <<~text
+
+        #{@player.class}の行動を選択してください。
+
+        #{hit_num}. Hit #{stand_num}. Stand
 
         text
   end
 
-  def player_point_information3
+  def error_message_about_select_action_num(hit_num: HIT_NUM, stand_num: STAND_NUM)
     puts <<~text
-          手札の合計点数は#{@player_point}です。
-          ----------------------------------
+          --------------------------------------
+          error ： #{hit_num} か #{stand_num} を入力してください。
+          --------------------------------------
           text
   end
 
-  def error_message_about_select_action_num
+  def info_end_of_players_turn_message
     puts <<~text
-          ----------------------------------
-          error ： 1か2を入力してください
-          ----------------------------------
-          text
+
+        #{@player.class}はカードを引き終わりました
+
+        text
   end
 
-  def information4
+  def check_dealers_first_hand_message
     puts <<~text
 
-        ディーラーがカードを引き終わりました
+        #{@dealer.class}の手札を確認します
+
+        text
+  end
+
+  def info_dealer_drow_card(dealer_draw_num: DEALER_DRAW_NUM)
+    puts <<~text
+
+        #{dealer_draw_num}点未満なので
+        #{@dealer.class}はもう1枚カードを引きます
+
+        text
+
+  end
+
+  def compare_points_message
+    puts <<~text
+
         勝敗判定に参りましょう
 
         text
   end
 
-  def end_message
+  def player_win_message
     puts <<~text
 
-        所持金が0円になりました。
-        ----------------------------------
+      おめでとうございます。#{@player.class}の勝ちです!
 
-        ゲームオーバー
-
-        text
+      text
   end
 
-  def continue_or_end_message
-    puts <<~text
-        現在の所持金 ： #{@player.money}円
-        ----------------------------------
-
-        1.ゲームを続ける 2.ゲームをやめる
-
-        text
-  end
-
-  def information5
+  def player_lose_message
     puts <<~text
 
-          ゲーム続行
+      ディーラーの勝利。#{@player.class}の負けです。
 
-          text
+      text
   end
 
-  def information6
-    puts <<~text
-
-          ゲーム終了
-
-          text
-  end
-
-  def information7
-    puts <<~text
-
-          ----------------------------------
-          error ： 1か2を入力してください
-          ----------------------------------
-
-          text
-  end
-
-  # def dealer_point_information1
-  #   puts <<~text
-  #   ディーラーの手札の合計点数は#{@dealer_point}です。
-  #   ----------------------------------
-  #   text
-  # end
-
-  def player_point_information4
-    puts <<~text
-    手札の合計点数は#{@player_point}です。
-    ----------------------------------
-    text
-  end
-
-  def information8
+  def end_in_tie_message
     puts <<~text
 
 
@@ -166,54 +146,61 @@ module Message
       text
   end
 
-  def information9
-    puts <<~text
+  # def end_message
+  #   puts <<~text
+
+  #       所持金が0円になりました。
+  #       ----------------------------------
+
+  #       ゲームオーバー
+
+  #       text
+  # end
+
+  # def continue_or_end_message
+  #   puts <<~text
+  #       現在の所持金 ： #{@player.money}円
+  #       ----------------------------------
+
+  #       1.ゲームを続ける 2.ゲームをやめる
+
+  #       text
+  # end
+
+  # def information5
+  #   puts <<~text
+
+  #         ゲーム続行
+
+  #         text
+  # end
+
+  # def information6
+  #   puts <<~text
+
+  #         ゲーム終了
+
+  #         text
+  # end
+
+  # def information9
+  #   puts <<~text
 
 
-      ブラックジャック！おめでとうございます。あなたの勝ちです。
+  #     ブラックジャック！おめでとうございます。#{@player.class}の勝ちです。
 
-      text
-  end
+  #     text
+  # end
 
-  def money_information
-    puts "---------money_information--------"
-    puts "支払われる金額 ： #{@paid}円"
-  end
-
-  def information10
-    puts <<~text
-
-
-      ディーラーがバーストしました。
-      おめでとうございます。あなたの勝ちです！
-
-      text
-  end
-
-  def information11
-    puts <<~text
-
-
-      ディーラーの勝利。あなたの負けです。
-
-      ---------money_information--------
-      text
-  end
-
-  def information12
-    puts <<~text
-
-
-      おめでとうございます。あなたの勝ちです。
-
-      text
-  end
+  # def money_information
+  #   puts "---------money_information--------"
+  #   puts "支払われる金額 ： #{@paid}円"
+  # end
 
   def info_bust_message(character)
     puts <<~text
 
     #{character.class}がバーストしました。
-    #{character.class}の負けです
 
     text
   end
