@@ -33,7 +33,7 @@ class Player < Character
   end
 
   def select_hit_or_stand
-    select_action_num = gets.chomp.to_i
+    action_num = gets.chomp.to_i
   end
 
   def set_win
@@ -50,6 +50,6 @@ class Player < Character
   end
 
   def select_continue_or_end
-    select_action_num = gets.chomp.to_i
+    action_num = gets.chomp.to_i
   end
 end

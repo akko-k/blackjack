@@ -1,5 +1,5 @@
 class Character
-  attr_reader :hand, :points_list, :points, :bust, :blackjack
+  attr_reader :points_list, :points, :bust, :blackjack
 
   NUM_TO_ADJUST_POINT_1_to_11 = 10
 

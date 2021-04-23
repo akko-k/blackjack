@@ -118,7 +118,7 @@ module Message
          TEXT
   end
 
-  def info_dealer_drow_card(dealer_stop_drawing_num: DEALER_STOP_DRAWING_NUMnts)
+  def info_dealer_drow_card_message(dealer_stop_drawing_num: DEALER_STOP_DRAWING_NUMnts)
     puts <<~TEXT
 
            #{dealer_stop_drawing_num}点未満なので
@@ -169,7 +169,7 @@ module Message
          TEXT
   end
 
-  def info_dividend_remaining_money_message(breakdown, absolute_value_of_dividend)
+  def info_dividend_and_remaining_money_message(breakdown, absolute_value_of_dividend)
     puts <<~TEXT
 
            -------- money_information -----------
@@ -183,7 +183,7 @@ module Message
          TEXT
   end
 
-  def info_end_message
+  def info_gameover_message
     puts <<~TEXT
 
            所持金が0円になりました。

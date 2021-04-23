@@ -56,19 +56,15 @@ class Blackjack
 
       if @player.points_list[0] == BLACK_JACK
         @player.determine_points
-        info_blackjack_message(@player)
         @player.set_blackjack
-      else
-        info_points_message(@player)
       end
+
+      blackjack?(@player) ? info_blackjack_message(@player) : info_points_message(@player)
 
       start_players_turn(deck) unless blackjack?(@player)
       start_dealers_turn(deck) unless bust?(@player)
 
-      # 両者バーストしてなければ，ポイントによる勝敗判定をする
-      unless bust?(@player) && bust?(@dealer)
-        judge_winner_by_points
-      end
+      judge_winner_by_points unless bust?(@player) || bust?(@dealer)
 
       #Enterキーを押してもらう
       type_enter_message
@@ -77,11 +73,11 @@ class Blackjack
       dividend = calculate_dividend(bet)
       @player.settle(dividend)
 
-      info_dividend_remaining_money(dividend)
+      info_dividend_and_remaining_money(dividend)
 
       if @player.money == 0
-        info_end_message
-        return
+        info_gameover_message
+        exit
       end
 
       action_num = request_player_to_decide_continue_or_end
@@ -95,6 +91,8 @@ class Blackjack
       end
     end
   end
+
+  private
 
   def request_player_to_bet
     request_player_to_decide_bet_message
@@ -128,7 +126,14 @@ class Blackjack
     character.receive(drawn_card)
   end
 
-  # プレイヤーの番
+  def blackjack?(character)
+    character.blackjack
+  end
+
+  def bust?(character)
+    character.bust
+  end
+
   def start_players_turn(deck)
     loop do
       action_num = request_player_to_select_hit_or_stand
@@ -137,7 +142,7 @@ class Blackjack
       when STAND_NUM
         @player.determine_points
         info_end_of_players_turn_message
-        break
+        return
       when HIT_NUM
         deal_card_to(@player, deck)
         @player.show_hand
@@ -166,7 +171,6 @@ class Blackjack
     action_num
   end
 
-  # ディーラーの番
   def start_dealers_turn(deck)
     # 最初に配ったカード2枚を見せる
     check_dealers_first_hand_message
@@ -174,27 +178,25 @@ class Blackjack
     @dealer.show_hand
     @dealer.calculate_points(bust_num: BUST_NUM)
 
-    # 最初の2枚がブラックジャックかどうかで条件分岐
     if @dealer.points_list[0] == BLACK_JACK
       @dealer.determine_points
-      info_blackjack_message(@dealer)
       @dealer.set_blackjack
-    else
-      info_points_message(@dealer)
     end
+
+    blackjack?(@dealer) ? info_blackjack_message(@dealer) : info_points_message(@dealer)
 
     #Enterキーを押してもらう
     type_enter_message
     $stdin.gets.chomp
 
     if blackjack?(@player)
-      @dealer.determine_points
+      @dealer.determine_points if ! blackjack?(@dealer)
       return
     end
 
     # 17未満の間はカードを引く
     while @dealer.points_list[0] < DEALER_STOP_DRAWING_NUM
-      info_dealer_drow_card(dealer_stop_drawing_num: DEALER_STOP_DRAWING_NUM)
+      info_dealer_drow_card_message(dealer_stop_drawing_num: DEALER_STOP_DRAWING_NUM)
       deal_card_to(@dealer,deck)
       @dealer.show_hand
       @dealer.calculate_points(bust_num: BUST_NUM)
@@ -250,14 +252,6 @@ class Blackjack
     end
   end
 
-  def blackjack?(character)
-    character.blackjack
-  end
-
-  def bust?(character)
-    character.bust
-  end
-
   def win?
     @player.win
   end
@@ -267,22 +261,23 @@ class Blackjack
   end
 
   def calculate_dividend(bet)
-    rate = case
-      when ! win? && ! loss?
-        1
-      when win? && ! blackjack?(@player)
-        2
-      when win? && blackjack?(@player)
-        2.5
-      when loss? && ! blackjack?(@dealer)
-        0
-      when loss? && blackjack?(@dealer)
-        -1.5
-      end
+    rate = 
+    case
+    when ! win? && ! loss?
+      1
+    when win? && ! blackjack?(@player)
+      2
+    when win? && blackjack?(@player)
+      2.5
+    when loss? && ! blackjack?(@dealer)
+      0
+    when loss? && blackjack?(@dealer)
+      -1.5
+    end
     (bet * rate).floor
   end
 
-  def info_dividend_remaining_money(dividend)
+  def info_dividend_and_remaining_money(dividend)
     breakdown =
     case
     when dividend >= 0
@@ -291,7 +286,7 @@ class Blackjack
       "支払額"
     end
     absolute_value_of_dividend = dividend.abs
-    info_dividend_remaining_money_message(breakdown, absolute_value_of_dividend)
+    info_dividend_and_remaining_money_message(breakdown, absolute_value_of_dividend)
   end
 
   def request_player_to_decide_continue_or_end
