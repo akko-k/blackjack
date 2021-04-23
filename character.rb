@@ -1,61 +1,49 @@
 class Character
-  attr_reader :hand, :points_list, :bust, :blackjack, :loss
+  attr_reader :hand, :points_list, :points, :bust, :blackjack
 
-  NUM_TO_ADJUST_POINTS_INCLUDING_A = 10
+  NUM_TO_ADJUST_POINT_1_to_11 = 10
 
-  def init
+  def set
     @hand = []
     @bust = false
     @blackjack = false
-    @loss = false
   end
 
-  # 配られたカードを手札に加える
-  def receive(dealt_card)
-    @hand << dealt_card
+  # カードを手札に加える
+  def receive(drawn_card)
+    @hand << drawn_card
   end
 
-  def calculate_points
+  def calculate_points(bust_num: BUST_NUM)
     points_sum = 0
     count_a = 0
-    count_11 = 0
+    adjusted_flag = 0
 
-    # Aを0とカウント
     @hand.each do |card|
       points_sum += convert_to_point(card)
-      #「A」が何回出たか
-      if convert_to_point(card) == 0
+      #「A」が何回出たかカウント
+      if convert_to_point(card) == 1
         count_a += 1
       end
     end
 
-    count_a.times do |count|
-      if points_sum <= NUM_TO_ADJUST_POINTS_INCLUDING_A
-        points_sum += 11
-        count_11 += 1
-      else
-        points_sum += 1
+    if count_a >= 1
+      if points_sum + NUM_TO_ADJUST_POINT_1_to_11 < bust_num
+        points_sum += NUM_TO_ADJUST_POINT_1_to_11
+        adjusted_flag = 1
       end
     end
-    
-    if count_11 == 0
-      @points_list = [points_sum] 
-    else
-      @points_list = [points_sum, points_sum - NUM_TO_ADJUST_POINTS_INCLUDING_A] 
-    end
 
+    @points_list = []
+    @points_list << points_sum
+
+    if adjusted_flag == 1
+      @points_list << points_sum - NUM_TO_ADJUST_POINT_1_to_11
+    end
   end
 
-  def convert_to_point(card)
-    case card.number
-    when "J" , "Q" , "K"
-      card_point = 10
-    when "A"
-      card_point = 0
-    else
-      card_point = card.number.to_i
-    end
-    card_point
+  def determine_points
+    @points = @points_list[0]
   end
 
   def set_blackjack
@@ -66,7 +54,16 @@ class Character
     @bust = true
   end
 
-  def set_loss
-    @loss = true
+  private
+
+  def convert_to_point(card)
+    case card.number
+    when "J", "Q", "K"
+      10
+    when "A"
+      1
+    else
+      card.number.to_i
+    end
   end
 end
