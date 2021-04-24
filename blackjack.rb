@@ -10,9 +10,10 @@ class Blackjack
   HIT_NUM = 1
   STAND_NUM = 2
   DEALER_STOP_DRAWING_NUM = 17
-  TIE_RATE = 1
-  NOMAL_WIN_RATE = 2
   BLACKJACK_RATE = 2.5
+  NOMAL_WIN_RATE = 2
+  TIE_RATE = 1
+  LOSS_RATE = 0
   GAME_CONTINUE_NUM = 1
   GAME_END_NUM = 2
 
@@ -73,7 +74,7 @@ class Blackjack
       dividend = calculate_dividend(bet)
       @player.settle(dividend)
 
-      info_dividend_and_remaining_money(dividend)
+      info_dividend_and_remaining_money_message(dividend)
 
       if @player.money == 0
         info_gameover_message
@@ -263,30 +264,16 @@ class Blackjack
   def calculate_dividend(bet)
     rate = 
     case
-    when ! win? && ! loss?
-      1
-    when win? && ! blackjack?(@player)
-      2
     when win? && blackjack?(@player)
-      2.5
-    when loss? && ! blackjack?(@dealer)
-      0
-    when loss? && blackjack?(@dealer)
-      -1.5
+      BLACKJACK_RATE
+    when win? && ! blackjack?(@player)
+      NOMAL_WIN_RATE
+    when ! win? && ! loss?
+      TIE_RATE
+    when loss?
+      LOSS_RATE
     end
     (bet * rate).floor
-  end
-
-  def info_dividend_and_remaining_money(dividend)
-    breakdown =
-    case
-    when dividend >= 0
-      "配当額"
-    else
-      "支払額"
-    end
-    absolute_value_of_dividend = dividend.abs
-    info_dividend_and_remaining_money_message(breakdown, absolute_value_of_dividend)
   end
 
   def request_player_to_decide_continue_or_end

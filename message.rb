@@ -169,12 +169,12 @@ module Message
          TEXT
   end
 
-  def info_dividend_and_remaining_money_message(breakdown, absolute_value_of_dividend)
+  def info_dividend_and_remaining_money_message(dividend)
     puts <<~TEXT
 
            -------- money_information -----------
  
-           #{breakdown} ： #{absolute_value_of_dividend}円
+           配当金： #{dividend}円
 
            現在の所持金 ： #{@player.money}円
 
