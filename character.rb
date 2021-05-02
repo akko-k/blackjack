@@ -14,31 +14,15 @@ class Character
     @hand << drawn_card
   end
 
-  def calculate_points(bust_num: BUST_NUM)
-    points_sum = 0
-    count_a = 0
-    adjusted_flag = 0
+  def calculate_points
+    points_sum = @hand.sum(&:point)
+    has_a = @hand.map(&:number).include?("A")
 
-    @hand.each do |card|
-      points_sum += convert_to_point(card)
-      #「A」が何回出たかカウント
-      if convert_to_point(card) == 1
-        count_a += 1
-      end
-    end
+    @points_list = [points_sum]
 
-    if count_a >= 1
-      if points_sum + NUM_TO_ADJUST_POINT_1_to_11 < bust_num
-        points_sum += NUM_TO_ADJUST_POINT_1_to_11
-        adjusted_flag = 1
-      end
-    end
-
-    @points_list = []
-    @points_list << points_sum
-
-    if adjusted_flag == 1
-      @points_list << points_sum - NUM_TO_ADJUST_POINT_1_to_11
+    if has_a && (points_sum + NUM_TO_ADJUST_POINT_1_to_11 < Blackjack::BUST_NUM)
+      @points_list << points_sum + NUM_TO_ADJUST_POINT_1_to_11
+      @points_list.reverse
     end
   end
 
@@ -54,16 +38,14 @@ class Character
     @bust = true
   end
 
-  private
+  def show_hand
+    puts <<~TEXT
 
-  def convert_to_point(card)
-    case card.number
-    when "J", "Q", "K"
-      10
-    when "A"
-      1
-    else
-      card.number.to_i
+           ----------- #{self.class} 手札 -----------
+         TEXT
+    @hand.each.with_index(1) do |card, i|
+      puts " #{i}枚目 ： #{card.card_info}"
     end
+    puts "-----------------------------------"
   end
 end

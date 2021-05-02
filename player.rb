@@ -1,10 +1,12 @@
-require_relative "character.rb"
+require_relative "character"
 
 class Player < Character
   attr_reader :money, :bet, :loss, :win
 
-  def initialize(player_money)
-    @money = player_money
+  INITIAL_MONEY = 10_000
+
+  def initialize
+    @money = INITIAL_MONEY
   end
 
   def set
@@ -13,23 +15,8 @@ class Player < Character
     @win = false
   end
 
-  def self.check_money
-    money = gets.to_i
-  end
-
   def bet_money(bet)
     @money -= bet
-  end
-
-  def show_hand
-    puts <<~text
-
-           ----------- #{self.class} 手札 -----------
-         text
-    @hand.each.with_index(1) do |card, i|
-      puts " #{i}枚目 ： #{card.card_info}"
-    end
-    puts "-----------------------------------"
   end
 
   def select_hit_or_stand

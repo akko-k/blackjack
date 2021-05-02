@@ -7,6 +7,17 @@ class Card
   end
 
   def card_info
-    return "#{@mark} #{@number}"
+    "#{@mark} #{@number}"
+  end
+
+  def point
+    case @number
+    when "J", "Q", "K"
+      10
+    when "A"
+      1
+    else
+      @number.to_i
+    end
   end
 end

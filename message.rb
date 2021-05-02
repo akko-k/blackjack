@@ -76,12 +76,12 @@ module Message
          TEXT
   end
 
-  def request_to_select_hit_or_stand_message(hit_num: HIT_NUM, stand_num: STAND_NUM)
+  def request_to_select_hit_or_stand_message
     puts <<~TEXT
 
            #{@player.class}の行動を選択してください。
 
-           #{hit_num}. Hit #{stand_num}. Stand
+           #{Blackjack::HIT_NUM}. Hit #{Blackjack::STAND_NUM}. Stand
 
          TEXT
   end
@@ -130,7 +130,7 @@ module Message
   def compare_points_message
     puts <<~TEXT
 
-          勝敗判定に参りましょう。
+           勝敗判定に参りましょう。
 
          TEXT
   end
@@ -165,7 +165,7 @@ module Message
 
            合計得点が同点となりました。引き分けです。
 
-        
+           
          TEXT
   end
 
@@ -173,7 +173,7 @@ module Message
     puts <<~TEXT
 
            -------- money_information -----------
- 
+           
            配当金： #{dividend}円
 
            現在の所持金 ： #{@player.money}円
@@ -207,8 +207,8 @@ module Message
 
   def error_message_about_continue_or_end(game_continue_num: GAME_CONTINUE_NUM, game_end_num: GAME_END_NUM)
     puts <<~TEXT
-           -----------------------------------
-           error ： #{game_continue_num} か #{game_end_num} を入力してください。
+            -----------------------------------
+            error ： #{game_continue_num} か #{game_end_num} を入力してください。
           ------------------------------------
          TEXT
   end
