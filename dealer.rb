@@ -1,45 +1,18 @@
-class Dealer
+require_relative "character"
 
-  def initialize
-    @hands = []
+class Dealer < Character
+  # 1枚カードを引く 伏せた状態の最後のカードから引くのでpop（元のコードはshiftを使用）
+  def draw_card(deck)
+    deck.cards.pop
   end
 
-  def hands
-    @hands
+  def show_hand_first_time
+    puts <<~TEXT
+
+           ----------- #{self.class} 手札 -----------
+           1枚目 ： #{@hand[0].card_info}
+           2枚目 ： 伏せられている
+           -----------------------------------
+         TEXT
   end
-
-  def first_draw_dealer(deck)
-
-    card = deck.draw
-    @hands << card
-    puts <<~text
-
-    ------------Dealer手札------------
-    1枚目 ： #{card.show}
-    2枚目 ： 伏せられている
-    ----------------------------------
-    text
-
-    card = deck.draw
-    @hands << card
-
-  end
-
-  def draw_dealer(deck)
-    card = deck.draw
-    @hands << card
-  end
-
-  def hands_show_dealer
-    puts <<~text
-
-    ------------dealer手札------------
-
-    text
-
-    @hands.each.with_index(1) do |hand, i|
-      puts " #{i}枚目 ： #{hand.show}"
-    end
-  end
-
 end

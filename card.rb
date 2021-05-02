@@ -1,16 +1,23 @@
 class Card
+  attr_reader :number
 
   def initialize(mark, number)
     @mark = mark
     @number = number
   end
 
-  def number
-    @number
+  def card_info
+    "#{@mark} #{@number}"
   end
 
-  def show
-    return "#{@mark}の#{@number}"
+  def point
+    case @number
+    when "J", "Q", "K"
+      10
+    when "A"
+      1
+    else
+      @number.to_i
+    end
   end
-
 end

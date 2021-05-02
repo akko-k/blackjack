@@ -1,52 +1,42 @@
-class Player
-  @@money = 100000
+require_relative "character"
+
+class Player < Character
+  attr_reader :money, :bet, :loss, :win
+
+  INITIAL_MONEY = 10_000
 
   def initialize
-    @hands = []
+    @money = INITIAL_MONEY
   end
 
-  def hands
-    @hands
+  def set
+    super
+    @loss = false
+    @win = false
   end
 
-  def money
-    @@money
+  def bet_money(bet)
+    @money -= bet
   end
 
-  def bet_money(money)
-    @@money -= money
+  def select_hit_or_stand
+    action_num = gets.chomp.to_i
   end
 
-  def paid_money(money)
-    @@money += money
+  def set_win
+    @win = true
   end
 
-  def first_draw_player(deck)
-    card = deck.draw
-    @hands << card
-    card = deck.draw
-    @hands << card
-    puts "------------Player手札------------"
-    @hands.each.with_index(1) do |hand, i|
-      puts " #{i}枚目 ： #{hand.show}"
-    end
+  def set_loss
+    @loss = true
   end
 
-  def draw_player(deck)
-    card = deck.draw
-    @hands << card
-
-    hands_show_player
+  def settle(dividend)
+    @money += dividend
+    @money = 0 if @money < 0
   end
 
-  def hands_show_player
-    puts <<~text
-
-    ------------Player手札------------
-    text
-
-    @hands.each.with_index(1) do |hand, i|
-      puts " #{i}枚目 ： #{hand.show}"
-    end
+  def select_continue_or_end
+    action_num = gets.chomp.to_i
   end
 end

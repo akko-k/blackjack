@@ -1,5 +1,9 @@
-require "./blackjack"
+require_relative "blackjack"
+require "pry"
 
-blackjack = Blackjack.new
+player = Player.new
+dealer = Dealer.new
+
+blackjack = Blackjack.new(player, dealer)
 
 blackjack.start
