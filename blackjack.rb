@@ -28,14 +28,14 @@ class Blackjack
     start_message
 
     loop do
-      deck = Deck.new
+      @deck = Deck.new
 
       @dealer.set
       @player.set
 
-      bet = request_player_to_bet
+      request_player_to_bet
 
-      deal_two_cards_to_each_first(deck)
+      deal_two_cards_to_each_first
 
       if @player.points_list[0] == BLACK_JACK
         @player.determine_points
@@ -44,8 +44,8 @@ class Blackjack
 
       blackjack?(@player) ? info_blackjack_message(@player) : info_points_message(@player)
 
-      start_players_turn(deck) unless blackjack?(@player)
-      start_dealers_turn(deck) unless bust?(@player)
+      start_players_turn unless blackjack?(@player)
+      start_dealers_turn unless bust?(@player)
 
       judge_winner_by_points unless bust?(@player) || bust?(@dealer)
 
@@ -53,7 +53,7 @@ class Blackjack
       type_enter_message
       $stdin.gets.chomp
 
-      dividend = calculate_dividend(bet)
+      dividend = calculate_dividend
       @player.settle(dividend)
 
       info_dividend_and_remaining_money_message(dividend)
@@ -79,33 +79,31 @@ class Blackjack
 
   def request_player_to_bet
     request_player_to_decide_bet_message
-    bet = 0
     loop do
-      bet = gets.chomp.to_i
-      if bet.between?(1, @player.money)
-        @player.bet_money(bet)
-        info_bet_money_and_remaining_money(bet)
+      @bet = gets.chomp.to_i
+      if @bet.between?(1, @player.money)
+        @player.bet_money(@bet)
+        info_bet_money_and_remaining_money(@bet)
         break
       end
       error_message_for_bet_money
     end
-    bet
   end
 
-  def deal_two_cards_to_each_first(deck)
+  def deal_two_cards_to_each_first
     # 配り方はプレイヤー1枚目→ディーラー1枚目（見せる）→プレイヤー2枚目→ディーラー2枚目（伏せる）
     dealer_deals_cards_first_time_message
     2.times do
-      deal_card_to(@player, deck)
-      deal_card_to(@dealer, deck)
+      deal_card_to(@player)
+      deal_card_to(@dealer)
     end
-    @dealer.show_hand_first_time
-    @player.show_hand
+    show_hand_first_time(@dealer)
+    show_hand(@player)
     @player.calculate_points
   end
 
-  def deal_card_to(character, deck)
-    drawn_card = @dealer.draw_card(deck)
+  def deal_card_to(character)
+    drawn_card = @dealer.draw_card(@deck)
     character.receive(drawn_card)
   end
 
@@ -117,7 +115,7 @@ class Blackjack
     character.bust
   end
 
-  def start_players_turn(deck)
+  def start_players_turn
     loop do
       action_num = request_player_to_select_hit_or_stand
 
@@ -127,8 +125,8 @@ class Blackjack
         info_end_of_players_turn_message
         return
       when HIT_NUM
-        deal_card_to(@player, deck)
-        @player.show_hand
+        deal_card_to(@player)
+        show_hand(@player)
         @player.calculate_points
         info_points_message(@player)
 
@@ -155,11 +153,11 @@ class Blackjack
     action_num
   end
 
-  def start_dealers_turn(deck)
+  def start_dealers_turn
     # 最初に配ったカード2枚を見せる
     check_dealers_first_hand_message
 
-    @dealer.show_hand
+    show_hand(@dealer)
     @dealer.calculate_points
 
     if @dealer.points_list[0] == BLACK_JACK
@@ -180,16 +178,16 @@ class Blackjack
 
     # 17未満の間はカードを引く
     while @dealer.points_list[0] < DEALER_STOP_DRAWING_NUM
-      info_dealer_drow_card_message(dealer_stop_drawing_num: DEALER_STOP_DRAWING_NUM)
-      deal_card_to(@dealer, deck)
-      @dealer.show_hand
+      info_dealer_drow_card_message
+      deal_card_to(@dealer)
+      show_hand(@dealer)
       @dealer.calculate_points
       info_points_message(@dealer)
     end
 
     if DEALER_STOP_DRAWING_NUM <= @dealer.points_list[0] && @dealer.points_list[0] < BUST_NUM
       @dealer.determine_points
-      nil
+      return
     elsif BUST_NUM <= @dealer.points_list[0]
       info_bust_message(@dealer)
       @dealer.set_bust
@@ -205,9 +203,9 @@ class Blackjack
     type_enter_message
     $stdin.gets.chomp
 
-    @player.show_hand
+    show_hand(@player)
     blackjack?(@player) ? info_blackjack_message(@player) : info_determined_points_message(@player)
-    @dealer.show_hand
+    show_hand(@dealer)
     blackjack?(@dealer) ? info_blackjack_message(@dealer) : info_determined_points_message(@dealer)
 
     if @dealer.points < @player.points
@@ -241,7 +239,7 @@ class Blackjack
     @player.loss
   end
 
-  def calculate_dividend(bet)
+  def calculate_dividend
     rate = if win? && blackjack?(@player)
         BLACKJACK_RATE
       elsif win? && !blackjack?(@player)
@@ -251,18 +249,18 @@ class Blackjack
       elsif loss?
         LOSS_RATE
       end
-    (bet * rate).floor
+    (@bet * rate).floor
   end
 
   def request_player_to_decide_continue_or_end
-    request_to_select_continue_or_end_message(game_continue_num: GAME_CONTINUE_NUM, game_end_num: GAME_END_NUM)
+    request_to_select_continue_or_end_message
 
     action_num = 0
     loop do
       action_num = @player.select_continue_or_end
       break if [GAME_CONTINUE_NUM, GAME_END_NUM].include?(action_num)
 
-      error_message_about_continue_or_end(game_continue_num: GAME_CONTINUE_NUM, game_end_num: GAME_END_NUM)
+      error_message_about_continue_or_end
     end
     action_num
   end
