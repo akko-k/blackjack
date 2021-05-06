@@ -26,52 +26,60 @@ class Blackjack
 
   def start
     start_message
+    @deck = Deck.new
 
-    loop do
-      @deck = Deck.new
+    @dealer.set
+    @player.set
 
-      @dealer.set
-      @player.set
+    request_player_to_bet
 
-      request_player_to_bet
+    deal_two_cards_to_each_first
 
-      deal_two_cards_to_each_first
+    if @player.points_list[0] == BLACK_JACK
+      @player.determine_points
+      @player.set_blackjack
+    end
 
-      if @player.points_list[0] == BLACK_JACK
-        @player.determine_points
-        @player.set_blackjack
-      end
+    blackjack?(@player) ? info_blackjack_message(@player) : info_points_message(@player)
 
-      blackjack?(@player) ? info_blackjack_message(@player) : info_points_message(@player)
+    start_players_turn unless blackjack?(@player)
+    start_dealers_turn unless bust?(@player)
+  end
 
-      start_players_turn unless blackjack?(@player)
-      start_dealers_turn unless bust?(@player)
+  def judge_winner
+    judge_winner_by_points unless bust?(@player) || bust?(@dealer)
 
-      judge_winner_by_points unless bust?(@player) || bust?(@dealer)
+    settle_dividend
+  end
 
-      # Enterキーを押してもらう
-      type_enter_message
-      $stdin.gets.chomp
+  def settle_dividend
 
-      dividend = calculate_dividend
-      @player.settle(dividend)
+    # Enterキーを押してもらう
+    type_enter_message
+    $stdin.gets.chomp
+    
+    dividend = calculate_dividend
+    @player.settle(dividend)
 
-      info_dividend_and_remaining_money_message(dividend)
+    info_dividend_and_remaining_money_message(dividend)
 
-      if @player.money == 0
-        info_gameover_message
-        exit
-      end
+    if @player.money == 0
+      info_gameover_message
+      exit
+    end
+    continue_or_end
+  end
 
-      action_num = request_player_to_decide_continue_or_end
+  def continue_or_end
+    action_num = request_player_to_decide_continue_or_end
 
-      case action_num
-      when GAME_END_NUM
-        game_end_message
-        exit
-      when GAME_CONTINUE_NUM
-        game_continue_message
-      end
+    case action_num
+    when GAME_END_NUM
+      game_end_message
+      exit
+    when GAME_CONTINUE_NUM
+      game_continue_message
+      start
     end
   end
 
@@ -135,6 +143,8 @@ class Blackjack
           @player.set_bust
           @player.set_loss
           player_lose_message
+          settle_dividend
+          continue_or_end
           return
         end
       end
@@ -173,6 +183,7 @@ class Blackjack
 
     if blackjack?(@player)
       @dealer.determine_points unless blackjack?(@dealer)
+      judge_winner
       return
     end
 
@@ -187,13 +198,15 @@ class Blackjack
 
     if DEALER_STOP_DRAWING_NUM <= @dealer.points_list[0] && @dealer.points_list[0] < BUST_NUM
       @dealer.determine_points
-      return
     elsif BUST_NUM <= @dealer.points_list[0]
       info_bust_message(@dealer)
       @dealer.set_bust
       @player.set_win
       player_win_message
+      settle_dividend
+      continue_or_end
     end
+    judge_winner
   end
 
   def judge_winner_by_points
