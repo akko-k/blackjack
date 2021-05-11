@@ -1,8 +1,8 @@
-require_relative "deck"
-require_relative "card"
-require_relative "player"
-require_relative "dealer"
-require_relative "message"
+require_relative 'deck'
+require_relative 'card'
+require_relative 'player'
+require_relative 'dealer'
+require_relative 'message'
 
 class Blackjack
   BUST_NUM = 22
@@ -222,11 +222,10 @@ class Blackjack
   end
 
   def settle_dividend
-
     # Enterキーを押してもらう
     type_enter_message
     $stdin.gets.chomp
-    
+
     dividend = calculate_dividend
     @player.settle(dividend)
 
@@ -240,7 +239,8 @@ class Blackjack
   end
 
   def calculate_dividend
-    rate = if win? && blackjack?(@player)
+    rate =
+      if win? && blackjack?(@player)
         BLACKJACK_RATE
       elsif win? && !blackjack?(@player)
         NORMAL_WIN_RATE
