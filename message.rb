@@ -51,6 +51,27 @@ module Message
          TEXT
   end
 
+  def show_hand_first_time(dealer)
+    puts <<~TEXT
+
+           ----------- #{dealer.class} 手札 -----------
+           1枚目 ： #{dealer.hand[0].card_info}
+           2枚目 ： 伏せられている
+           -----------------------------------
+         TEXT
+  end
+
+  def show_hand(character)
+    puts <<~TEXT
+
+           ----------- #{character.class} 手札 -----------
+         TEXT
+    character.hand.each.with_index(1) do |card, i|
+      puts " #{i}枚目 ： #{card.card_info}"
+    end
+    puts "-----------------------------------"
+  end
+
   def info_points_message(character)
     points_index_0_message = "#{character.class}の手札の合計点数は #{character.points_list[0]}"
     points_index_1_message = "、もしくは #{character.points_list[1]} "
@@ -86,10 +107,10 @@ module Message
          TEXT
   end
 
-  def error_message_about_hit_or_stand(hit_num, stand_num)
+  def error_message_about_hit_or_stand
     puts <<~TEXT
            --------------------------------------
-           error ： #{hit_num} か #{stand_num} を入力してください。
+           error ： #{Blackjack::HIT_NUM} か #{Blackjack::STAND_NUM} を入力してください。
            --------------------------------------
          TEXT
   end
@@ -118,10 +139,10 @@ module Message
          TEXT
   end
 
-  def info_dealer_drow_card_message(dealer_stop_drawing_num: DEALER_STOP_DRAWING_NUMnts)
+  def info_dealer_drow_card_message
     puts <<~TEXT
 
-           #{dealer_stop_drawing_num}点未満なので
+           #{Blackjack::DEALER_STOP_DRAWING_NUM}点未満なので
            #{@dealer.class}はもう1枚カードを引きます。
 
          TEXT
@@ -193,23 +214,23 @@ module Message
          TEXT
   end
 
-  def request_to_select_continue_or_end_message(game_continue_num: GAME_CONTINUE_NUM, game_end_num: GAME_END_NUM)
+  def request_to_select_continue_or_end_message
     puts <<~TEXT
            
            ゲームを続けますか？
            --------------------------------------
 
-           #{game_continue_num}.ゲームを続ける #{game_end_num}.ゲームをやめる
+           #{Blackjack::GAME_CONTINUE_NUM}.ゲームを続ける #{Blackjack::GAME_END_NUM}.ゲームをやめる
         
            --------------------------------------
          TEXT
   end
 
-  def error_message_about_continue_or_end(game_continue_num: GAME_CONTINUE_NUM, game_end_num: GAME_END_NUM)
+  def error_message_about_continue_or_end
     puts <<~TEXT
-            -----------------------------------
-            error ： #{game_continue_num} か #{game_end_num} を入力してください。
-          ------------------------------------
+          ----------------------------------------
+            error ： #{Blackjack::GAME_CONTINUE_NUM} か #{Blackjack::GAME_END_NUM} を入力してください。
+          ----------------------------------------
          TEXT
   end
 
