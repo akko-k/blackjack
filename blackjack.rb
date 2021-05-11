@@ -11,7 +11,7 @@ class Blackjack
   STAND_NUM = 2
   DEALER_STOP_DRAWING_NUM = 17
   BLACKJACK_RATE = 2.5
-  NOMAL_WIN_RATE = 2
+  NORMAL_WIN_RATE = 2
   TIE_RATE = 1
   LOSS_RATE = 0
   GAME_CONTINUE_NUM = 1
@@ -35,7 +35,7 @@ class Blackjack
 
     deal_two_cards_to_each_first
 
-    if @player.points_list[0] == BLACK_JACK
+    if @player.points_list.max == BLACK_JACK
       @player.determine_points
       @player.set_blackjack
     end
@@ -46,43 +46,6 @@ class Blackjack
     start_dealers_turn unless bust?(@player)
   end
 
-  def judge_winner
-    judge_winner_by_points unless bust?(@player) || bust?(@dealer)
-
-    settle_dividend
-  end
-
-  def settle_dividend
-
-    # Enterキーを押してもらう
-    type_enter_message
-    $stdin.gets.chomp
-    
-    dividend = calculate_dividend
-    @player.settle(dividend)
-
-    info_dividend_and_remaining_money_message(dividend)
-
-    if @player.money == 0
-      info_gameover_message
-      exit
-    end
-    continue_or_end
-  end
-
-  def continue_or_end
-    action_num = request_player_to_decide_continue_or_end
-
-    case action_num
-    when GAME_END_NUM
-      game_end_message
-      exit
-    when GAME_CONTINUE_NUM
-      game_continue_message
-      start
-    end
-  end
-
   private
 
   def request_player_to_bet
@@ -91,7 +54,7 @@ class Blackjack
       @bet = gets.chomp.to_i
       if @bet.between?(1, @player.money)
         @player.bet_money(@bet)
-        info_bet_money_and_remaining_money(@bet)
+        info_bet_money_and_remaining_money
         break
       end
       error_message_for_bet_money
@@ -138,7 +101,7 @@ class Blackjack
         @player.calculate_points
         info_points_message(@player)
 
-        if BUST_NUM <= @player.points_list[0]
+        if BUST_NUM <= @player.points_list.max
           info_bust_message(@player)
           @player.set_bust
           @player.set_loss
@@ -170,7 +133,7 @@ class Blackjack
     show_hand(@dealer)
     @dealer.calculate_points
 
-    if @dealer.points_list[0] == BLACK_JACK
+    if @dealer.points_list.max == BLACK_JACK
       @dealer.determine_points
       @dealer.set_blackjack
     end
@@ -188,17 +151,17 @@ class Blackjack
     end
 
     # 17未満の間はカードを引く
-    while @dealer.points_list[0] < DEALER_STOP_DRAWING_NUM
-      info_dealer_drow_card_message
+    while @dealer.points_list.max < DEALER_STOP_DRAWING_NUM
+      info_dealer_draw_card_message
       deal_card_to(@dealer)
       show_hand(@dealer)
       @dealer.calculate_points
       info_points_message(@dealer)
     end
 
-    if DEALER_STOP_DRAWING_NUM <= @dealer.points_list[0] && @dealer.points_list[0] < BUST_NUM
+    if DEALER_STOP_DRAWING_NUM <= @dealer.points_list.max && @dealer.points_list.max < BUST_NUM
       @dealer.determine_points
-    elsif BUST_NUM <= @dealer.points_list[0]
+    elsif BUST_NUM <= @dealer.points_list.max
       info_bust_message(@dealer)
       @dealer.set_bust
       @player.set_win
@@ -252,17 +215,54 @@ class Blackjack
     @player.loss
   end
 
+  def judge_winner
+    judge_winner_by_points unless bust?(@player) || bust?(@dealer)
+
+    settle_dividend
+  end
+
+  def settle_dividend
+
+    # Enterキーを押してもらう
+    type_enter_message
+    $stdin.gets.chomp
+    
+    dividend = calculate_dividend
+    @player.settle(dividend)
+
+    info_dividend_and_remaining_money_message(dividend)
+
+    if @player.money == 0
+      info_gameover_message
+      exit
+    end
+    continue_or_end
+  end
+
   def calculate_dividend
     rate = if win? && blackjack?(@player)
         BLACKJACK_RATE
       elsif win? && !blackjack?(@player)
-        NOMAL_WIN_RATE
+        NORMAL_WIN_RATE
       elsif !win? && !loss?
         TIE_RATE
       elsif loss?
         LOSS_RATE
       end
     (@bet * rate).floor
+  end
+
+  def continue_or_end
+    action_num = request_player_to_decide_continue_or_end
+
+    case action_num
+    when GAME_END_NUM
+      game_end_message
+      exit
+    when GAME_CONTINUE_NUM
+      game_continue_message
+      start
+    end
   end
 
   def request_player_to_decide_continue_or_end
