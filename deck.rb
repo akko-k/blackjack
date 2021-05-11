@@ -7,7 +7,7 @@ class Deck
     @cards = []
 
     marks = %w[♤ ♡ ♢ ♧]
-    numbers = %w[A 2 3 4 5 6 7 8 9 10 J Q K]
+    numbers = %w[Q A 7 A Q A] # Aの計算確認用
     marks.each do |mark|
       numbers.each do |number|
         # markとnumberの組み合わせを一つずつcardクラスに渡し、それぞれのcardオブジェクトを生成する
@@ -16,7 +16,7 @@ class Deck
         @cards << card
       end
     end
-    @cards.shuffle!
+    @cards # .shuffle!
   end
 end
 

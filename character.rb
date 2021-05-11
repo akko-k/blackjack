@@ -16,7 +16,7 @@ class Character
 
   def calculate_points
     points_sum = @hand.sum(&:point)
-    has_a = @hand.map(&:number).include?("A")
+    has_a = @hand.map(&:number).include?('A')
 
     @points_list = [points_sum]
 
