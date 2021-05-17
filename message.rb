@@ -19,12 +19,12 @@ module Message
          TEXT
   end
 
-  def info_bet_money_and_remaining_money(bet)
+  def info_bet_money_and_remaining_money
     puts <<~TEXT
 
            -------- money_information -------
 
-           掛け金： #{bet}円
+           掛け金： #{@bet}円
 
            現在の所持金 ： #{@player.money}円
 
@@ -139,7 +139,7 @@ module Message
          TEXT
   end
 
-  def info_dealer_drow_card_message
+  def info_dealer_draw_card_message
     puts <<~TEXT
 
            #{Blackjack::DEALER_STOP_DRAWING_NUM}点未満なので
