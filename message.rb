@@ -10,7 +10,7 @@ module Message
          TEXT
   end
 
-  def request_player_to_decide_bet_message
+  def request_bet_message
     puts <<~TEXT
 
            現在の所持金は#{@player.money}円です。
@@ -19,7 +19,7 @@ module Message
          TEXT
   end
 
-  def info_bet_money_and_remaining_money
+  def info_bet_money_message
     puts <<~TEXT
 
            -------- money_information -------
@@ -43,7 +43,7 @@ module Message
          TEXT
   end
 
-  def dealer_deals_cards_first_time_message
+  def first_deal_message
     puts <<~TEXT
 
            #{@dealer.class}がカードを2枚ずつ配ります。
@@ -51,34 +51,34 @@ module Message
          TEXT
   end
 
-  def show_hand_first_time(dealer)
-    puts <<~TEXT
+  def show_hand(character,if_first_time)
+    if if_first_time == Blackjack::FIRST_TIME
+      puts <<~TEXT
 
-           ----------- #{dealer.class} 手札 -----------
-           1枚目 ： #{dealer.hand[0].card_info}
-           2枚目 ： 伏せられている
-           -----------------------------------
-         TEXT
-  end
+            ----------- #{character.class} 手札 -----------
+            1枚目 ： #{character.hand[0].card_info}
+            2枚目 ： 伏せられている
+            -----------------------------------
+          TEXT
+    else
+      puts <<~TEXT
 
-  def show_hand(character)
-    puts <<~TEXT
-
-           ----------- #{character.class} 手札 -----------
-         TEXT
-    character.hand.each.with_index(1) do |card, i|
-      puts " #{i}枚目 ： #{card.card_info}"
+            ----------- #{character.class} 手札 -----------
+          TEXT
+      character.hand.each.with_index(1) do |card, i|
+        puts " #{i}枚目 ： #{card.card_info}"
+      end
+      puts "-----------------------------------"
     end
-    puts "-----------------------------------"
   end
 
-  def info_points_message(character)
-    points_index_0_message = "#{character.class}の手札の合計点数は #{character.points_list[0]}"
-    points_index_1_message = "、もしくは #{character.points_list[1]} "
+  def info_point_message(character)
+    points_index_0_message = "#{character.class}の手札の合計点数は #{character.point_list[0]}"
+    points_index_1_message = "、もしくは #{character.point_list[1]} "
 
     print points_index_0_message
 
-    if character.points_list.size == 2
+    if character.point_list.size == 2
       print points_index_1_message
     end
 
@@ -97,7 +97,7 @@ module Message
          TEXT
   end
 
-  def request_to_select_hit_or_stand_message
+  def request_action_message
     puts <<~TEXT
 
            #{@player.class}の行動を選択してください。
@@ -107,7 +107,7 @@ module Message
          TEXT
   end
 
-  def error_message_about_hit_or_stand
+  def error_message_about_action
     puts <<~TEXT
            --------------------------------------
            error ： #{Blackjack::HIT_NUM} か #{Blackjack::STAND_NUM} を入力してください。

@@ -15,11 +15,15 @@ class Player < Character
     @win = false
   end
 
+  def decide_bet
+    bet = gets.chomp.to_i
+  end
+
   def bet_money(bet)
     @money -= bet
   end
 
-  def select_hit_or_stand
+  def select_action
     action_num = gets.chomp.to_i
   end
 
