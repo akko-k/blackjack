@@ -1,7 +1,7 @@
 class Card
   attr_reader :point, :number
 
-@@point_list = { 
+@@card_point = { 
   "2" => 2 ,
   "3" => 3 ,
   "4" => 4 ,
@@ -20,7 +20,7 @@ class Card
   def initialize(mark, number)
     @mark = mark
     @number = number
-    @point = @@point_list.fetch(@number)
+    @point = @@card_point.fetch(@number)
   end
 
   def card_info

@@ -1,9 +1,9 @@
 require_relative "blackjack"
 require "pry"
 
-player = Player.new
 dealer = Dealer.new
+player = Player.new
 
-blackjack = Blackjack.new(player, dealer)
+blackjack = Blackjack.new(dealer, player)
 
 blackjack.start

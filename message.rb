@@ -1,5 +1,5 @@
 module Message
-  def start_message
+  def start_msg
     puts <<~TEXT
            ----------------------------------
            |                                |
@@ -10,30 +10,30 @@ module Message
          TEXT
   end
 
-  def request_bet_message
+  def request_bet_msg(player)
     puts <<~TEXT
 
-           現在の所持金は#{@player.money}円です。
+           現在の所持金は#{player.money}円です。
            掛け金を入力して下さい。
 
          TEXT
   end
 
-  def info_bet_money_message
+  def info_bet_money_msg(bet, player)
     puts <<~TEXT
 
            -------- money_information -------
 
-           掛け金： #{@bet}円
+           掛け金： #{bet}円
 
-           現在の所持金 ： #{@player.money}円
+           現在の所持金 ： #{player.money}円
 
            ----------------------------------
 
          TEXT
   end
 
-  def error_message_for_bet_money
+  def error_msg_for_bet_money
     puts <<~TEXT
 
            ---------------------------------------------------------
@@ -43,15 +43,15 @@ module Message
          TEXT
   end
 
-  def first_deal_message
+  def first_deal_msg(dealer)
     puts <<~TEXT
 
-           #{@dealer.class}がカードを2枚ずつ配ります。
+           #{dealer.class}がカードを2枚ずつ配ります。
 
          TEXT
   end
 
-  def show_hand(character,if_first_time)
+  def show_hand_msg(character,if_first_time)
     if if_first_time == Blackjack::FIRST_TIME
       puts <<~TEXT
 
@@ -72,24 +72,24 @@ module Message
     end
   end
 
-  def info_point_message(character)
-    points_index_0_message = "#{character.class}の手札の合計点数は #{character.point_list[0]}"
-    points_index_1_message = "、もしくは #{character.point_list[1]} "
+  def point_list_msg(character)
+    point_index_0_msg = "#{character.class}の手札の合計点数は #{character.point_list[0]}"
+    point_index_1_msg = "、もしくは #{character.point_list[1]} "
 
-    print points_index_0_message
+    print point_index_0_msg
 
     if character.point_list.size == 2
-      print points_index_1_message
+      print point_index_1_msg
     end
 
     puts "です。"
   end
 
-  def info_determined_points_message(character)
-    puts "#{character.class}の手札の合計点数は #{character.points}です。"
+  def point_msg(character)
+    puts "#{character.class}の手札の合計点数は #{character.point}です。"
   end
 
-  def info_blackjack_message(character)
+  def blackjack_msg(character)
     puts <<~TEXT
 
            #{character.class}の手札はブラックジャックです！
@@ -97,17 +97,17 @@ module Message
          TEXT
   end
 
-  def request_action_message
+  def select_action_msg(player)
     puts <<~TEXT
 
-           #{@player.class}の行動を選択してください。
+           #{player.class}の行動を選択してください。
 
            #{Blackjack::HIT_NUM}. Hit #{Blackjack::STAND_NUM}. Stand
 
          TEXT
   end
 
-  def error_message_about_action
+  def error_msg_about_action
     puts <<~TEXT
            --------------------------------------
            error ： #{Blackjack::HIT_NUM} か #{Blackjack::STAND_NUM} を入力してください。
@@ -115,7 +115,7 @@ module Message
          TEXT
   end
 
-  def info_bust_message(character)
+  def bust_msg(character)
     puts <<~TEXT
 
            #{character.class}がバーストしました。
@@ -123,32 +123,32 @@ module Message
          TEXT
   end
 
-  def info_end_of_players_turn_message
+  def players_turn_end_msg(player)
     puts <<~TEXT
 
-           #{@player.class}はカードを引き終わりました。
+           #{player.class}はカードを引き終わりました。
 
          TEXT
   end
 
-  def check_dealers_first_hand_message
+  def dealers_hand_msg(dealer)
     puts <<~TEXT
 
-           #{@dealer.class}の手札を確認します。
+           #{dealer.class}の手札を確認します。
 
          TEXT
   end
 
-  def info_dealer_draw_card_message
+  def dealer_draw_msg(dealer)
     puts <<~TEXT
 
-           #{Blackjack::DEALER_STOP_DRAWING_NUM}点未満なので
-           #{@dealer.class}はもう1枚カードを引きます。
+           #{Blackjack::STOP_DRAWING_NUM}点未満なので
+           #{dealer.class}はもう1枚カードを引きます。
 
          TEXT
   end
 
-  def compare_points_message
+  def compare_point_msg
     puts <<~TEXT
 
            勝敗判定に参りましょう。
@@ -156,7 +156,7 @@ module Message
          TEXT
   end
 
-  def type_enter_message
+  def type_enter_msg
     puts <<~TEXT
 
            （ キーボードでEnterキーを押してください。）
@@ -164,23 +164,23 @@ module Message
          TEXT
   end
 
-  def player_win_message
+  def player_win_msg(player)
     puts <<~TEXT
 
-           おめでとうございます。#{@player.class}の勝ちです!
+           おめでとうございます。#{player.class}の勝ちです!
 
          TEXT
   end
 
-  def player_lose_message
+  def player_lose_msg(player)
     puts <<~TEXT
 
-           ディーラーの勝利。#{@player.class}の負けです。
+           ディーラーの勝利。#{player.class}の負けです。
 
          TEXT
   end
 
-  def end_in_tie_message
+  def end_in_tie_msg
     puts <<~TEXT
 
 
@@ -190,21 +190,21 @@ module Message
          TEXT
   end
 
-  def info_dividend_and_remaining_money_message(dividend)
+  def dividend_msg(dividend, player)
     puts <<~TEXT
 
            -------- money_information -----------
            
            配当金： #{dividend}円
 
-           現在の所持金 ： #{@player.money}円
+           現在の所持金 ： #{player.money}円
 
            --------------------------------------
 
          TEXT
   end
 
-  def info_gameover_message
+  def info_gameover_msg
     puts <<~TEXT
 
            所持金が0円になりました。
@@ -214,7 +214,7 @@ module Message
          TEXT
   end
 
-  def request_to_select_continue_or_end_message
+  def continue_or_end_msg
     puts <<~TEXT
            
            ゲームを続けますか？
@@ -226,7 +226,7 @@ module Message
          TEXT
   end
 
-  def error_message_about_continue_or_end
+  def error_msg_about_continue_or_end
     puts <<~TEXT
           ----------------------------------------
             error ： #{Blackjack::GAME_CONTINUE_NUM} か #{Blackjack::GAME_END_NUM} を入力してください。
@@ -234,7 +234,7 @@ module Message
          TEXT
   end
 
-  def game_continue_message
+  def game_continue_msg
     puts <<~TEXT
 
            ゲームを続けます。
@@ -242,7 +242,7 @@ module Message
          TEXT
   end
 
-  def game_end_message
+  def game_end_msg
     puts <<~TEXT
 
            ゲーム終了

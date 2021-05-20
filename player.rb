@@ -40,7 +40,7 @@ class Player < Character
     @money = 0 if @money < 0
   end
 
-  def select_continue_or_end
+  def select_continue_or_end #ここはselect_actionにまとめても大丈夫か？
     action_num = gets.chomp.to_i
   end
 end
