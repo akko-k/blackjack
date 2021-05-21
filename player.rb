@@ -1,7 +1,7 @@
 require_relative "character"
 
 class Player < Character
-  attr_reader :money, :bet, :game_result
+  attr_reader :money, :bet
 
   INITIAL_MONEY = 10_000
 
