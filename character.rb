@@ -1,5 +1,5 @@
 class Character
-  attr_reader :hand_cards, :point, :no_adjusted_point, :status
+  attr_reader :hand_cards, :point, :no_adjusted_point
 
   ADJUST_NUM = 10
 
