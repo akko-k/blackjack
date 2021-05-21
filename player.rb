@@ -1,7 +1,7 @@
-require_relative "character"
+require_relative 'character'
 
 class Player < Character
-  attr_reader :money, :bet, :loss, :win
+  attr_reader :money, :bet, :game_result
 
   INITIAL_MONEY = 10_000
 
@@ -11,8 +11,7 @@ class Player < Character
 
   def set
     super
-    @loss = false
-    @win = false
+    @game_result = false
   end
 
   def decide_bet
@@ -27,20 +26,20 @@ class Player < Character
     action_num = gets.chomp.to_i
   end
 
-  def set_win
-    @win = true
+  def set(game_result)
+    @game_result = game_result
   end
 
-  def set_loss
-    @loss = true
+  def win?
+    @game_result == "win"
+  end
+
+  def loss?
+    @game_result == "loss"
   end
 
   def settle(dividend)
     @money += dividend
     @money = 0 if @money < 0
-  end
-
-  def select_continue_or_end #ここはselect_actionにまとめても大丈夫か？
-    action_num = gets.chomp.to_i
   end
 end

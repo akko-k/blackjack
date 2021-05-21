@@ -1,5 +1,5 @@
-require_relative "blackjack"
-require "pry"
+require_relative 'blackjack'
+require 'pry'
 
 dealer = Dealer.new
 player = Player.new
