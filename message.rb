@@ -68,7 +68,7 @@ module Message
       character.hand_cards.each.with_index(1) do |card, i|
         puts " #{i}枚目 ： #{card.card_info}"
       end
-      puts '-----------------------------------'
+      puts "-----------------------------------"
     end
   end
 
@@ -80,7 +80,7 @@ module Message
 
     print point_msg_2 if character.no_adjusted_point
 
-    puts 'です。'
+    puts "です。"
   end
 
   def blackjack_msg(character)

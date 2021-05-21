@@ -1,4 +1,4 @@
-require_relative 'character'
+require_relative "character"
 
 class Dealer < Character
   # 1枚カードを引く
