@@ -1,8 +1,8 @@
-require_relative 'deck'
-require_relative 'card'
-require_relative 'player'
-require_relative 'dealer'
-require_relative 'message'
+require_relative "deck"
+require_relative "card"
+require_relative "player"
+require_relative "dealer"
+require_relative "message"
 
 class Blackjack
   INITIAL_BET = 0
@@ -43,10 +43,6 @@ class Blackjack
       start_dealers_turn unless @player.bust?
 
       judge_winner unless @player.bust? || @dealer.bust?
-      p @player.bust?
-      p @player.game_result
-      p @player.win? 
-      p @player.loss? 
       info_judge
       settle_dividend
       continue_or_end
@@ -81,7 +77,7 @@ class Blackjack
     show_hand_msg(@player, NOT_FIRST_TIME)
 
     @player.change("blackjack") if @player.point == BLACKJACK_NUM
-    @player.blackjack? ? blackjack_msg(@player) : point_msg(@player,Character::ADJUST_NUM)
+    @player.blackjack? ? blackjack_msg(@player) : point_msg(@player, Character::ADJUST_NUM)
   end
 
   def deal_card_to(character)
@@ -101,7 +97,7 @@ class Blackjack
       when HIT_NUM
         deal_card_to(@player)
         show_hand_msg(@player, NOT_FIRST_TIME)
-        point_msg(@player,Character::ADJUST_NUM)
+        point_msg(@player, Character::ADJUST_NUM)
 
         if @player.point > BLACKJACK_NUM
           bust_msg(@player)
@@ -127,12 +123,12 @@ class Blackjack
 
   def start_dealers_turn
     # 最初に配ったカード2枚を見せる
-    @dealer
-
     show_hand_msg(@dealer, NOT_FIRST_TIME)
 
     @dealer.change("blackjack") if @dealer.point == BLACKJACK_NUM
-    @dealer.blackjack? ? blackjack_msg(@dealer) : point_msg(@dealer,Character::ADJUST_NUM)
+    @dealer.blackjack? ? blackjack_msg(@dealer) : point_msg(@dealer, Character::ADJUST_NUM)
+
+    return if @player.blackjack?
 
     # Enterキーを押してもらう
     type_enter_msg
@@ -143,7 +139,7 @@ class Blackjack
       dealer_draw_msg(@dealer)
       deal_card_to(@dealer)
       show_hand_msg(@dealer, NOT_FIRST_TIME)
-      point_msg(@dealer,Character::ADJUST_NUM)
+      point_msg(@dealer, Character::ADJUST_NUM)
     end
 
     if @dealer.point > BLACKJACK_NUM
@@ -161,9 +157,9 @@ class Blackjack
     $stdin.gets.chomp
 
     show_hand_msg(@player, NOT_FIRST_TIME)
-    @player.blackjack? ? blackjack_msg(@player) : point_msg(@player,Character::ADJUST_NUM)
+    @player.blackjack? ? blackjack_msg(@player) : point_msg(@player, Character::ADJUST_NUM)
     show_hand_msg(@dealer, NOT_FIRST_TIME)
-    @dealer.blackjack? ? blackjack_msg(@dealer) : point_msg(@dealer,Character::ADJUST_NUM)
+    @dealer.blackjack? ? blackjack_msg(@dealer) : point_msg(@dealer, Character::ADJUST_NUM)
 
     if @dealer.point < @player.point
       @player.set("win")

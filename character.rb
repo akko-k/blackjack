@@ -37,6 +37,6 @@ class Character
   private
 
   def has_a?
-    @hand_cards.map(&:number).include?('A')
+    @hand_cards.map(&:number).include?("A")
   end
 end

@@ -83,10 +83,6 @@ module Message
     puts 'です。'
   end
 
-  # def point_msg(character)
-  #   puts "#{character.class}の手札の合計点数は #{character.point}です。"
-  # end
-
   def blackjack_msg(character)
     puts <<~TEXT
 

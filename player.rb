@@ -31,11 +31,11 @@ class Player < Character
   end
 
   def win?
-    @game_result == "win"
+    @game_result == 'win'
   end
 
   def loss?
-    @game_result == "loss"
+    @game_result == 'loss'
   end
 
   def settle(dividend)
