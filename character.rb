@@ -1,11 +1,11 @@
 class Character
-  attr_reader :hand_cards, :point, :no_adjusted_point, :hand_status
+  attr_reader :hand_cards, :point, :no_adjusted_point, :status
 
   ADJUST_NUM = 10
 
   def reset
     @hand_cards = []
-    @hand_status = false
+    @status = false
   end
 
   # カードを手札に加える
@@ -22,16 +22,16 @@ class Character
     end
   end
 
-  def change(hand_status)
-    @hand_status = hand_status
+  def change(status)
+    @status = status
   end
 
   def blackjack?
-    @hand_status == "blackjack"
+    @status == "blackjack"
   end
 
   def bust?
-    @hand_status == "bust"
+    @status == "bust"
   end
 
   private
