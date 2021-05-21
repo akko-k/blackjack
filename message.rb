@@ -73,12 +73,12 @@ module Message
   end
 
   def point_msg(character, adjust_num)
-    point_msg = "#{character.class}の手札の合計点数は #{character.point}"
-    point_msg_2 = "、もしくは #{character.no_adjusted_point} "
+    point_msg_1 = "#{character.class}の手札の合計点数は #{character.point_list[0]}"
+    point_msg_2 = "、もしくは #{character.point_list[1]} "
 
-    print point_msg
+    print point_msg_1
 
-    print point_msg_2 if character.no_adjusted_point
+    print point_msg_2 if character.point_list[1]
 
     puts "です。"
   end

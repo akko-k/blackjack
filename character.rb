@@ -1,5 +1,5 @@
 class Character
-  attr_reader :hand_cards, :point, :no_adjusted_point
+  attr_reader :hand_cards, :point, :point_list
 
   ADJUST_NUM = 10
 
@@ -14,11 +14,11 @@ class Character
   end
 
   def decide_point
-    @no_adjusted_point = false
-    @point = @hand_cards.map(&:point).sum
+    @point_list = []
+    @point_list << @point = @hand_cards.map(&:point).sum
     if has_a? && (@point + ADJUST_NUM <= Blackjack::BLACKJACK_NUM)
-      @no_adjusted_point = @point
       @point += ADJUST_NUM
+      @point_list.unshift(@point)
     end
   end
 
