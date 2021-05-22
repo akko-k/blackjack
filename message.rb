@@ -185,13 +185,13 @@ module Message
   def dividend_msg(dividend, player)
     puts <<~TEXT
 
--------- money_information -----------
+      -------- money_information -------------
 
-配当金： #{dividend}円
+      配当金： #{dividend}円
 
-現在の所持金 ： #{player.money}円
+      現在の所持金 ： #{player.money}円
 
---------------------------------------
+      ----------------------------------------
 
     TEXT
   end
@@ -210,11 +210,11 @@ module Message
     puts <<~TEXT
 
       ゲームを続けますか？
-      --------------------------------------
+      ----------------------------------------
 
       #{Blackjack::GAME_CONTINUE_NUM}.ゲームを続ける #{Blackjack::GAME_END_NUM}.ゲームをやめる
 
-      --------------------------------------
+      ----------------------------------------
     TEXT
   end
 

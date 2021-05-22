@@ -197,8 +197,10 @@ class Blackjack
     @player.settle(dividend)
 
     dividend_msg(dividend, @player)
-
-    info_gameover_msg if @player.money == 0
+    if @player.money == 0
+      info_gameover_msg
+      exit
+    end
   end
 
   def calculate_dividend
