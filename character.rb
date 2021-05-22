@@ -1,39 +1,42 @@
 class Character
-  attr_reader :hand, :points_list, :points, :bust, :blackjack
+  attr_reader :hand_cards, :point, :point_list
 
-  NUM_TO_ADJUST_POINT_1_TO_11 = 10
+  ADJUST_NUM = 10
 
-  def set
-    @hand = []
-    @bust = false
-    @blackjack = false
+  def reset
+    @hand_cards = []
+    @status = false
   end
 
   # カードを手札に加える
   def receive(drawn_card)
-    @hand << drawn_card
+    @hand_cards << drawn_card
   end
 
-  def calculate_points
-    points_sum = @hand.sum(&:point)
-    has_a = @hand.map(&:number).include?('A')
-
-    @points_list = [points_sum]
-
-    if has_a && (points_sum + NUM_TO_ADJUST_POINT_1_TO_11 < Blackjack::BUST_NUM)
-      @points_list.unshift(points_sum + NUM_TO_ADJUST_POINT_1_TO_11)
+  def decide_point
+    @point_list = []
+    @point_list << @point = @hand_cards.map(&:point).sum
+    if has_a? && (@point + ADJUST_NUM <= Blackjack::BLACKJACK_NUM)
+      @point += ADJUST_NUM
+      @point_list.unshift(@point)
     end
   end
 
-  def determine_points
-    @points = @points_list.max
+  def change(status)
+    @status = status
   end
 
-  def set_blackjack
-    @blackjack = true
+  def blackjack?
+    @status == "blackjack"
   end
 
-  def set_bust
-    @bust = true
+  def bust?
+    @status == "bust"
+  end
+
+  private
+
+  def has_a?
+    @hand_cards.map(&:number).include?("A")
   end
 end
