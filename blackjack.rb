@@ -3,6 +3,8 @@ require_relative "card"
 require_relative "player"
 require_relative "dealer"
 require_relative "message"
+require_relative "status"
+require_relative "game_sesult"
 
 class Blackjack
   INITIAL_BET = 0
@@ -20,6 +22,7 @@ class Blackjack
   GAME_END_NUM = 2
 
   include Message
+  include Status
 
   def initialize(dealer, player)
     @dealer = dealer
@@ -42,7 +45,7 @@ class Blackjack
       start_players_turn unless @player.blackjack?
       start_dealers_turn unless @player.bust?
 
-      judge_winner unless @player.bust? || @dealer.bust?
+      judge_winner
       info_judge
       settle_dividend
       continue_or_end
@@ -73,17 +76,16 @@ class Blackjack
       deal_card_to(@player)
       deal_card_to(@dealer)
     end
-    show_hand_msg(@dealer, FIRST_TIME)
-    show_hand_msg(@player, NOT_FIRST_TIME)
+    show_hand_msg(@dealer, first_time: true)
+    show_hand_msg(@player)
 
-    @player.change("blackjack") if @player.point == BLACKJACK_NUM
-    @player.blackjack? ? blackjack_msg(@player) : point_msg(@player, Character::ADJUST_NUM)
+    @player.change(Status::BLACKJACK) if @player.point == BLACKJACK_NUM
+    info_status_or_points(@player)
   end
 
   def deal_card_to(character)
     drawn_card = @dealer.draw_card(@deck)
     character.receive(drawn_card)
-    character.decide_point
   end
 
   def start_players_turn
@@ -96,13 +98,12 @@ class Blackjack
         break
       when HIT_NUM
         deal_card_to(@player)
-        show_hand_msg(@player, NOT_FIRST_TIME)
-        point_msg(@player, Character::ADJUST_NUM)
+        show_hand_msg(@player)
+        info_status_or_points(@player)
 
         if @player.point > BLACKJACK_NUM
-          bust_msg(@player)
-          @player.change("bust")
-          @player.set("loss")
+          @player.change(Status::BUST)
+          info_status_or_points(@player)
           break
         end
       end
@@ -123,10 +124,11 @@ class Blackjack
 
   def start_dealers_turn
     # 最初に配ったカード2枚を見せる
-    show_hand_msg(@dealer, NOT_FIRST_TIME)
+    dealers_hand_msg(@dealer)
+    show_hand_msg(@dealer)
 
-    @dealer.change("blackjack") if @dealer.point == BLACKJACK_NUM
-    @dealer.blackjack? ? blackjack_msg(@dealer) : point_msg(@dealer, Character::ADJUST_NUM)
+    @dealer.change(Status::BLACKJACK) if @dealer.point == BLACKJACK_NUM
+    info_status_or_points(@dealer)
 
     return if @player.blackjack?
 
@@ -138,14 +140,23 @@ class Blackjack
     while @dealer.point < STOP_DRAWING_NUM
       dealer_draw_msg(@dealer)
       deal_card_to(@dealer)
-      show_hand_msg(@dealer, NOT_FIRST_TIME)
-      point_msg(@dealer, Character::ADJUST_NUM)
+      show_hand_msg(@dealer)
+      info_status_or_points(@dealer)
     end
 
     if @dealer.point > BLACKJACK_NUM
-      bust_msg(@dealer)
-      @dealer.change("bust")
-      @player.set("win")
+      @dealer.change(Status::BUST)
+      info_status_or_points(@dealer)
+    end
+  end
+
+  def info_status_or_points(character)
+    if character.blackjack?
+      blackjack_msg(character)
+    elsif character.bust?
+      bust_msg(character)
+    else
+      point_msg(character, Character::ADJUST_NUM)
     end
   end
 
@@ -156,15 +167,20 @@ class Blackjack
     type_enter_msg
     $stdin.gets.chomp
 
-    show_hand_msg(@player, NOT_FIRST_TIME)
-    @player.blackjack? ? blackjack_msg(@player) : point_msg(@player, Character::ADJUST_NUM)
-    show_hand_msg(@dealer, NOT_FIRST_TIME)
-    @dealer.blackjack? ? blackjack_msg(@dealer) : point_msg(@dealer, Character::ADJUST_NUM)
+    show_hand_msg(@player)
+    info_status_or_points(@player)
+    
+    show_hand_msg(@dealer)
+    info_status_or_points(@dealer)
 
-    if @dealer.point < @player.point
-      @player.set("win")
+    if @dealer.bust?
+      @player.set(GameResult::WIN)
+    elsif @player.bust?
+      @player.set(GameResult::LOSS)
+    elsif @dealer.point < @player.point
+      @player.set(GameResult::WIN)
     elsif @player.point < @dealer.point
-      @player.set("loss")
+      @player.set(GameResult::LOSS)
     else
       judge_winner_when_same_point
     end
@@ -172,9 +188,9 @@ class Blackjack
 
   def judge_winner_when_same_point
     if @player.blackjack? && !@dealer.blackjack?
-      @player.set("win")
+      @player.set(GameResult::WIN)
     elsif !@player.blackjack? && @dealer.blackjack?
-      @player.set("loss")
+      @player.set(GameResult::LOSS)
     end
   end
 

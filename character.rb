@@ -11,15 +11,7 @@ class Character
   # カードを手札に加える
   def receive(drawn_card)
     @hand_cards << drawn_card
-  end
-
-  def decide_point
-    @point_list = []
-    @point_list << @point = @hand_cards.map(&:point).sum
-    if has_a? && (@point + ADJUST_NUM <= Blackjack::BLACKJACK_NUM)
-      @point += ADJUST_NUM
-      @point_list.unshift(@point)
-    end
+    calc_point
   end
 
   def change(status)
@@ -36,6 +28,15 @@ class Character
 
   private
 
+  def calc_point
+    @point_list = []
+    @point_list << @point = @hand_cards.map(&:point).sum
+    if has_a? && (@point + ADJUST_NUM <= Blackjack::BLACKJACK_NUM)
+      @point += ADJUST_NUM
+      @point_list.unshift(@point)
+    end
+  end
+  
   def has_a?
     @hand_cards.map(&:number).include?("A")
   end
