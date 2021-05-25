@@ -129,7 +129,7 @@ class Blackjack
     @dealer.change(BLACKJACK) if @dealer.point == BLACKJACK_NUM
     info_status_or_points(@dealer)
 
-    return if @player.blackjack?
+    return if @player.blackjack? || @player.bust?
 
     # Enterキーを押してもらう
     type_enter_msg
