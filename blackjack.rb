@@ -6,12 +6,9 @@ require_relative "message"
 
 class Blackjack
   INITIAL_BET = 0
-  BLACKJACK_NUM = 21
   HIT_NUM = 1
   STAND_NUM = 2
   STOP_DRAWING_NUM = 17
-  BLACKJACK = "blackjack"
-  BUST = "bust"
   WIN = "win"
   LOSS = "loss"
   BLACKJACK_RATE = 2.5
@@ -42,7 +39,7 @@ class Blackjack
       deal_first
 
       start_players_turn unless @player.blackjack?
-      start_dealers_turn
+      start_dealers_turn unless @player.bust?
 
       judge_winner
       info_judge
@@ -78,7 +75,6 @@ class Blackjack
     show_hand_msg(@dealer, first_time: true)
     show_hand_msg(@player)
 
-    @player.change(BLACKJACK) if @player.point == BLACKJACK_NUM
     info_status_or_points(@player)
   end
 
@@ -99,12 +95,7 @@ class Blackjack
         deal_card_to(@player)
         show_hand_msg(@player)
         info_status_or_points(@player)
-
-        if @player.point > BLACKJACK_NUM
-          @player.change(BUST)
-          info_status_or_points(@player)
-          break
-        end
+        break if @player.bust?
       end
     end
   end
@@ -114,7 +105,7 @@ class Blackjack
     action_num = 0
     loop do
       action_num = @player.select_action
-      break if [HIT_NUM, STAND_NUM].include?(action_num)
+      break if action_num.between?(HIT_NUM, STAND_NUM)
 
       error_msg_about_action
     end
@@ -126,10 +117,9 @@ class Blackjack
     dealers_hand_msg(@dealer)
     show_hand_msg(@dealer)
 
-    @dealer.change(BLACKJACK) if @dealer.point == BLACKJACK_NUM
     info_status_or_points(@dealer)
 
-    return if @player.blackjack? || @player.bust?
+    return if @player.blackjack?
 
     # Enterキーを押してもらう
     type_enter_msg
@@ -142,17 +132,13 @@ class Blackjack
       show_hand_msg(@dealer)
       info_status_or_points(@dealer)
     end
-
-    if @dealer.point > BLACKJACK_NUM
-      @dealer.change(BUST)
-      info_status_or_points(@dealer)
-    end
   end
 
   def info_status_or_points(character)
     if character.blackjack?
       blackjack_msg(character)
     elsif character.bust?
+      point_msg(character, Character::ADJUST_NUM)
       bust_msg(character)
     else
       point_msg(character, Character::ADJUST_NUM)
@@ -168,7 +154,7 @@ class Blackjack
 
     show_hand_msg(@player)
     info_status_or_points(@player)
-    
+
     show_hand_msg(@dealer)
     info_status_or_points(@dealer)
 
@@ -251,7 +237,7 @@ class Blackjack
     action_num = 0
     loop do
       action_num = @player.select_action
-      break if [GAME_CONTINUE_NUM, GAME_END_NUM].include?(action_num)
+      break if action_num.between?(GAME_CONTINUE_NUM, GAME_END_NUM)
 
       error_msg_about_continue_or_end
     end

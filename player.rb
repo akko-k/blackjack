@@ -9,7 +9,7 @@ class Player < Character
     @money = INITIAL_MONEY
   end
 
-  def set
+  def reset
     super
     @game_result = false
   end
