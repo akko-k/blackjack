@@ -9,7 +9,7 @@ class Player < Character
     @money = INITIAL_MONEY
   end
 
-  def set
+  def reset
     super
     @game_result = false
   end
@@ -31,11 +31,11 @@ class Player < Character
   end
 
   def win?
-    @game_result == "win"
+    @game_result == Blackjack::WIN
   end
 
   def loss?
-    @game_result == "loss"
+    @game_result == Blackjack::LOSS
   end
 
   def settle(dividend)

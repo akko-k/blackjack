@@ -51,13 +51,13 @@ module Message
     TEXT
   end
 
-  def show_hand_msg(character, if_first_time)
-    if if_first_time == Blackjack::FIRST_TIME
+  def show_hand_msg(character, first_time: false)
+    if first_time
       puts <<~TEXT
 
         ----------- #{character.class} 手札 -----------
-        1枚目 ： #{character.hand_cards[0].card_info}
-        2枚目 ： 伏せられている
+         1枚目 ： #{character.hand_cards[0].card_info}
+         2枚目 ： 伏せられている
         -----------------------------------
       TEXT
     else
@@ -112,7 +112,7 @@ module Message
   def bust_msg(character)
     puts <<~TEXT
 
-      #{character.class}がバーストしました。
+      #{character.class}はバーストしました。
 
     TEXT
   end
