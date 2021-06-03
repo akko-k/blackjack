@@ -5,12 +5,14 @@ require_relative "dealer"
 require_relative "message"
 
 class Blackjack
-  INITIAL_BET = 0
+  BLACKJACK_NUM = 21 # Characterクラスから移行
+  ADJUST_NUM = 10 # Characterクラスから移行
+  NUM_A = "A" # Characterクラスから移行
   HIT_NUM = 1
   STAND_NUM = 2
   STOP_DRAWING_NUM = 17
-  WIN = "win"
-  LOSS = "loss"
+  WIN = 0
+  LOSS = 1
   BLACKJACK_RATE = 2.5
   NORMAL_WIN_RATE = 2
   TIE_RATE = 1
@@ -52,7 +54,7 @@ class Blackjack
 
   def request_bet
     request_bet_msg(@player)
-    bet = INITIAL_BET
+    bet = 0
     loop do
       bet = @player.decide_bet
       if bet.between?(1, @player.money)
@@ -80,7 +82,7 @@ class Blackjack
 
   def deal_card_to(character)
     drawn_card = @dealer.draw_card(@deck)
-    character.receive(drawn_card)
+    character.receive(drawn_card, BLACKJACK_NUM, ADJUST_NUM, NUM_A)
   end
 
   def start_players_turn
@@ -101,13 +103,13 @@ class Blackjack
   end
 
   def request_hit_or_stand
-    select_action_msg(@player)
+    select_action_msg(@player, HIT_NUM, STAND_NUM)
     action_num = 0
     loop do
       action_num = @player.select_action
       break if action_num.between?(HIT_NUM, STAND_NUM)
 
-      error_msg_about_action
+      error_msg_about_action(HIT_NUM, STAND_NUM)
     end
     action_num
   end
@@ -127,7 +129,7 @@ class Blackjack
 
     # 17未満の間はカードを引く
     while @dealer.point < STOP_DRAWING_NUM
-      dealer_draw_msg(@dealer)
+      dealer_draw_msg(@dealer, STOP_DRAWING_NUM)
       deal_card_to(@dealer)
       show_hand_msg(@dealer)
       info_status_or_points(@dealer)
@@ -138,10 +140,10 @@ class Blackjack
     if character.blackjack?
       blackjack_msg(character)
     elsif character.bust?
-      point_msg(character, Character::ADJUST_NUM)
+      point_msg(character)
       bust_msg(character)
     else
-      point_msg(character, Character::ADJUST_NUM)
+      point_msg(character)
     end
   end
 

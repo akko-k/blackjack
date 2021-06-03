@@ -72,7 +72,7 @@ module Message
     end
   end
 
-  def point_msg(character, adjust_num)
+  def point_msg(character)
     point_msg_1 = "#{character.class}の手札の合計点数は #{character.point_list[0]}"
     point_msg_2 = "、もしくは #{character.point_list[1]} "
 
@@ -91,20 +91,20 @@ module Message
     TEXT
   end
 
-  def select_action_msg(player)
+  def select_action_msg(player, hit_num, stand_num)
     puts <<~TEXT
 
       #{player.class}の行動を選択してください。
 
-      #{Blackjack::HIT_NUM}. Hit #{Blackjack::STAND_NUM}. Stand
+      #{hit_num}. Hit #{stand_num}. Stand
 
     TEXT
   end
 
-  def error_msg_about_action
+  def error_msg_about_action(hit_num, stand_num)
     puts <<~TEXT
       --------------------------------------
-      error ： #{Blackjack::HIT_NUM} か #{Blackjack::STAND_NUM} を入力してください。
+      error ： #{hit_num} か #{stand_num} を入力してください。
       --------------------------------------
     TEXT
   end
@@ -133,10 +133,10 @@ module Message
     TEXT
   end
 
-  def dealer_draw_msg(dealer)
+  def dealer_draw_msg(dealer, stop_drawing_num)
     puts <<~TEXT
 
-      #{Blackjack::STOP_DRAWING_NUM}点未満なので
+      #{stop_drawing_num}点未満なので
       #{dealer.class}はもう1枚カードを引きます。
 
     TEXT
@@ -176,9 +176,9 @@ module Message
 
   def end_in_tie_msg
     puts <<~TEXT
-
-      合計得点が同点となりました。引き分けです。
-  
+      #{'      '}
+                  合計得点が同点となりました。引き分けです。
+            #{'  '}
     TEXT
   end
 

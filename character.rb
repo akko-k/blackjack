@@ -1,12 +1,10 @@
 class Character
   attr_reader :hand_cards, :point, :point_list
 
-  ADJUST_NUM = 10
   BLACKJACK_HAND_CARDS_SIZE = 2
   BLACKJACK_POINT_LIST_SIZE = 2
-  BLACKJACK_NUM = 21
-  BLACKJACK = "blackjack"
-  BUST = "bust"
+  BLACKJACK = 0
+  BUST = 1
 
   def reset
     @hand_cards = []
@@ -14,39 +12,39 @@ class Character
   end
 
   # カードを手札に加える
-  def receive(drawn_card)
+  def receive(drawn_card, blackjack_num, adjust_num, num_a)
     @hand_cards << drawn_card
-    calc_point
+    calc_point(blackjack_num, adjust_num, num_a)
   end
 
   def blackjack?
-    @status == "blackjack"
+    @status == BLACKJACK
   end
 
   def bust?
-    @status == "bust"
+    @status == BUST
   end
 
   private
 
-  def calc_point
+  def calc_point(blackjack_num, adjust_num, num_a)
     @point_list = []
     @point_list << @point = @hand_cards.map(&:point).sum
-    if has_a? && (@point + ADJUST_NUM <= BLACKJACK_NUM)
-      @point += ADJUST_NUM
+    if has_a?(num_a) && (@point + adjust_num <= blackjack_num)
+      @point += adjust_num
       @point_list.unshift(@point)
     end
-    change_status
+    change_status(blackjack_num)
   end
 
-  def has_a?
-    @hand_cards.map(&:number).include?("A")
+  def has_a?(num_a)
+    @hand_cards.map(&:number).include?(num_a)
   end
 
-  def change_status
-    if @point == BLACKJACK_NUM && @hand_cards.size == BLACKJACK_HAND_CARDS_SIZE
+  def change_status(blackjack_num)
+    if @point == blackjack_num && @hand_cards.size == BLACKJACK_HAND_CARDS_SIZE
       @status = BLACKJACK
-    elsif @point > BLACKJACK_NUM
+    elsif @point > blackjack_num
       @status = BUST
     end
   end
