@@ -5,9 +5,8 @@ require_relative "dealer"
 require_relative "message"
 
 class Blackjack
-  BLACKJACK_NUM = 21 # Characterクラスから移行
-  ADJUST_NUM = 10 # Characterクラスから移行
-  NUM_A = "A" # Characterクラスから移行
+  BLACKJACK_NUM = 21
+  ADJUST_NUM = 10
   HIT_NUM = 1
   STAND_NUM = 2
   STOP_DRAWING_NUM = 17
@@ -39,10 +38,10 @@ class Blackjack
       @bet = request_bet
 
       deal_first
-
+      
       start_players_turn unless @player.blackjack?
       start_dealers_turn unless @player.bust?
-
+      
       judge_winner
       info_judge
       settle_dividend
@@ -74,6 +73,7 @@ class Blackjack
       deal_card_to(@player)
       deal_card_to(@dealer)
     end
+    
     show_hand_msg(@dealer, first_time: true)
     show_hand_msg(@player)
 
@@ -82,7 +82,7 @@ class Blackjack
 
   def deal_card_to(character)
     drawn_card = @dealer.draw_card(@deck)
-    character.receive(drawn_card, BLACKJACK_NUM, ADJUST_NUM, NUM_A)
+    character.receive(drawn_card, BLACKJACK_NUM, ADJUST_NUM)
   end
 
   def start_players_turn

@@ -12,9 +12,9 @@ class Character
   end
 
   # カードを手札に加える
-  def receive(drawn_card, blackjack_num, adjust_num, num_a)
+  def receive(drawn_card, blackjack_num, adjust_num)
     @hand_cards << drawn_card
-    calc_point(blackjack_num, adjust_num, num_a)
+    calc_point(blackjack_num, adjust_num)
   end
 
   def blackjack?
@@ -27,18 +27,18 @@ class Character
 
   private
 
-  def calc_point(blackjack_num, adjust_num, num_a)
+  def calc_point(blackjack_num, adjust_num)
     @point_list = []
     @point_list << @point = @hand_cards.map(&:point).sum
-    if has_a?(num_a) && (@point + adjust_num <= blackjack_num)
+    if has_a? && (@point + adjust_num <= blackjack_num)
       @point += adjust_num
       @point_list.unshift(@point)
     end
     change_status(blackjack_num)
   end
 
-  def has_a?(num_a)
-    @hand_cards.map(&:number).include?(num_a)
+  def has_a?
+    @hand_cards.map(&:is_ace?).any?
   end
 
   def change_status(blackjack_num)

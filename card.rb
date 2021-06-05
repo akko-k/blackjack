@@ -26,4 +26,8 @@ class Card
   def card_info
     "#{@mark} #{@number}"
   end
+
+  def is_ace?
+    @number if @number == "A"
+  end
 end
