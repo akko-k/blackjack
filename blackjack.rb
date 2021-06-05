@@ -41,7 +41,7 @@ class Blackjack
       
       start_players_turn unless @player.blackjack?
       start_dealers_turn unless @player.bust?
-      
+
       judge_winner
       info_judge
       settle_dividend

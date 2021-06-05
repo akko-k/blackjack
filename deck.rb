@@ -7,7 +7,7 @@ class Deck
     @cards = []
 
     marks = %w[♤ ♡ ♢ ♧]
-    numbers = %w[J J A A] # 両者ブラックジャック
+    numbers = %w[A 2 3 4 5 6 7 8 9 10 J Q K]
     marks.each do |mark|
       numbers.each do |number|
         # markとnumberの組み合わせを一つずつcardクラスに渡し、それぞれのcardオブジェクトを生成する
@@ -16,17 +16,6 @@ class Deck
         @cards << card
       end
     end
-    @cards#.shuffle!
+    @cards.shuffle!
   end
 end
-
-# プレイヤーが負ける場合
-# numbers = %w[10 9 9 8] #プレイヤー:17，ディーラー:19
-# 
-# 
-# 
-# 
-
-# 引き分けの場合
-# 
-# numbers = %w[9 7 8 10] # 両者17
