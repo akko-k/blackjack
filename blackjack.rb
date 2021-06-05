@@ -10,8 +10,8 @@ class Blackjack
   HIT_NUM = 1
   STAND_NUM = 2
   STOP_DRAWING_NUM = 17
-  WIN = 0
-  LOSS = 1
+  WIN = true
+  LOSS = false
   BLACKJACK_RATE = 2.5
   NORMAL_WIN_RATE = 2
   TIE_RATE = 1

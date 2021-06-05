@@ -11,7 +11,7 @@ class Player < Character
 
   def reset
     super
-    @game_result = false
+    @game_result = 0
   end
 
   def decide_bet
