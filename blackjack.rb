@@ -2,23 +2,11 @@ require_relative "deck"
 require_relative "card"
 require_relative "player"
 require_relative "dealer"
+require_relative "rule"
 require_relative "message"
 
 class Blackjack
-  BLACKJACK_NUM = 21
-  ADJUST_NUM = 10
-  HIT_NUM = 1
-  STAND_NUM = 2
-  STOP_DRAWING_NUM = 17
-  WIN = true
-  LOSS = false
-  BLACKJACK_RATE = 2.5
-  NORMAL_WIN_RATE = 2
-  TIE_RATE = 1
-  LOSS_RATE = 0
-  GAME_CONTINUE_NUM = 1
-  GAME_END_NUM = 2
-
+  include Rule
   include Message
 
   def initialize(dealer, player)
@@ -38,7 +26,7 @@ class Blackjack
       @bet = request_bet
 
       deal_first
-      
+
       start_players_turn unless @player.blackjack?
       start_dealers_turn unless @player.bust?
 
@@ -73,7 +61,7 @@ class Blackjack
       deal_card_to(@player)
       deal_card_to(@dealer)
     end
-    
+
     show_hand_msg(@dealer, first_time: true)
     show_hand_msg(@player)
 
@@ -82,7 +70,7 @@ class Blackjack
 
   def deal_card_to(character)
     drawn_card = @dealer.draw_card(@deck)
-    character.receive(drawn_card, BLACKJACK_NUM, ADJUST_NUM)
+    character.receive(drawn_card)
   end
 
   def start_players_turn
@@ -161,13 +149,13 @@ class Blackjack
     info_status_or_points(@dealer)
 
     if @dealer.bust?
-      @player.set(WIN)
+      @player.game_result = WIN
     elsif @player.bust?
-      @player.set(LOSS)
+      @player.game_result = LOSE
     elsif @dealer.point < @player.point
-      @player.set(WIN)
+      @player.game_result = WIN
     elsif @player.point < @dealer.point
-      @player.set(LOSS)
+      @player.game_result = LOSE
     else
       judge_winner_when_same_point
     end
@@ -175,16 +163,16 @@ class Blackjack
 
   def judge_winner_when_same_point
     if @player.blackjack? && !@dealer.blackjack?
-      @player.set(WIN)
+      @player.game_result = WIN
     elsif !@player.blackjack? && @dealer.blackjack?
-      @player.set(LOSS)
+      @player.game_result = LOSE
     end
   end
 
   def info_judge
     if @player.win?
       win_msg(@player)
-    elsif @player.loss?
+    elsif @player.lose?
       lose_msg(@player)
     else
       end_in_tie_msg
@@ -212,10 +200,10 @@ class Blackjack
         BLACKJACK_RATE
       elsif @player.win? && !@player.blackjack?
         NORMAL_WIN_RATE
-      elsif !@player.win? && !@player.loss?
+      elsif !@player.win? && !@player.lose?
         TIE_RATE
-      elsif @player.loss?
-        LOSS_RATE
+      elsif @player.lose?
+        LOSE_RATE
       end
     (@bet * rate).floor
   end
@@ -234,14 +222,14 @@ class Blackjack
   end
 
   def request_continue_or_end
-    continue_or_end_msg
+    continue_or_end_msg(GAME_CONTINUE_NUM, GAME_END_NUM)
 
     action_num = 0
     loop do
       action_num = @player.select_action
       break if action_num.between?(GAME_CONTINUE_NUM, GAME_END_NUM)
 
-      error_msg_about_continue_or_end
+      error_msg_about_continue_or_end(GAME_CONTINUE_NUM, GAME_END_NUM)
     end
     action_num
   end
