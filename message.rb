@@ -206,22 +206,22 @@ module Message
     TEXT
   end
 
-  def continue_or_end_msg
+  def continue_or_end_msg(game_continue_num, game_end_num)
     puts <<~TEXT
 
       ゲームを続けますか？
       ----------------------------------------
 
-      #{Blackjack::GAME_CONTINUE_NUM}.ゲームを続ける #{Blackjack::GAME_END_NUM}.ゲームをやめる
+      #{game_continue_num}.ゲームを続ける #{game_end_num}.ゲームをやめる
 
       ----------------------------------------
     TEXT
   end
 
-  def error_msg_about_continue_or_end
+  def error_msg_about_continue_or_end(game_continue_num, game_end_num)
     puts <<~TEXT
       ----------------------------------------
-        error ： #{Blackjack::GAME_CONTINUE_NUM} か #{Blackjack::GAME_END_NUM} を入力してください。
+        error ： #{game_continue_num} か #{game_end_num} を入力してください。
       ----------------------------------------
     TEXT
   end

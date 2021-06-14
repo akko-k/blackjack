@@ -2,6 +2,7 @@ require_relative "character"
 
 class Player < Character
   attr_reader :money, :bet
+  attr_writer :game_result
 
   INITIAL_MONEY = 10_000
 
@@ -11,7 +12,7 @@ class Player < Character
 
   def reset
     super
-    @game_result = 0
+    @game_result = nil
   end
 
   def decide_bet
@@ -26,16 +27,12 @@ class Player < Character
     action_num = gets.chomp.to_i
   end
 
-  def set(game_result)
-    @game_result = game_result
-  end
-
   def win?
-    @game_result == Blackjack::WIN
+    @game_result == WIN
   end
 
   def loss?
-    @game_result == Blackjack::LOSS
+    @game_result == LOSS
   end
 
   def settle(dividend)
