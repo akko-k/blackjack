@@ -31,8 +31,8 @@ class Player < Character
     @game_result == WIN
   end
 
-  def loss?
-    @game_result == LOSS
+  def lose?
+    @game_result == LOSE
   end
 
   def settle(dividend)

@@ -151,11 +151,11 @@ class Blackjack
     if @dealer.bust?
       @player.game_result = WIN
     elsif @player.bust?
-      @player.game_result = LOSS
+      @player.game_result = LOSE
     elsif @dealer.point < @player.point
       @player.game_result = WIN
     elsif @player.point < @dealer.point
-      @player.game_result = LOSS
+      @player.game_result = LOSE
     else
       judge_winner_when_same_point
     end
@@ -165,14 +165,14 @@ class Blackjack
     if @player.blackjack? && !@dealer.blackjack?
       @player.game_result = WIN
     elsif !@player.blackjack? && @dealer.blackjack?
-      @player.game_result = LOSS
+      @player.game_result = LOSE
     end
   end
 
   def info_judge
     if @player.win?
       win_msg(@player)
-    elsif @player.loss?
+    elsif @player.lose?
       lose_msg(@player)
     else
       end_in_tie_msg
@@ -200,10 +200,10 @@ class Blackjack
         BLACKJACK_RATE
       elsif @player.win? && !@player.blackjack?
         NORMAL_WIN_RATE
-      elsif !@player.win? && !@player.loss?
+      elsif !@player.win? && !@player.lose?
         TIE_RATE
-      elsif @player.loss?
-        LOSS_RATE
+      elsif @player.lose?
+        LOSE_RATE
       end
     (@bet * rate).floor
   end

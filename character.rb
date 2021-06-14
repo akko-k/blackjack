@@ -29,14 +29,14 @@ class Character
   def calc_point
     @point_list = []
     @point_list << @point = @hand_cards.map(&:point).sum
-    if has_a? && (@point + ADJUST_NUM <= BLACKJACK_NUM)
+    if has_ace? && (@point + ADJUST_NUM <= BLACKJACK_NUM)
       @point += ADJUST_NUM
       @point_list.unshift(@point)
     end
     change_status
   end
 
-  def has_a?
+  def has_ace?
     @hand_cards.map(&:is_ace?).any?
   end
 
