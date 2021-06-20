@@ -17,11 +17,11 @@ class Character
   end
 
   def blackjack?
-    @status == BLACKJACK
+    @status == STATUS_BLACKJACK
   end
 
   def bust?
-    @status == BUST
+    @status == STATUS_BUST
   end
 
   private
@@ -42,9 +42,9 @@ class Character
 
   def change_status
     if @point == BLACKJACK_NUM && @hand_cards.size == BLACKJACK_HAND_CARDS_SIZE
-      @status = BLACKJACK
+      @status = STATUS_BLACKJACK
     elsif @point > BLACKJACK_NUM
-      @status = BUST
+      @status = STATUS_BUST
     end
   end
 end

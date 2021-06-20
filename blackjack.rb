@@ -6,6 +6,13 @@ require_relative "rule"
 require_relative "message"
 
 class Blackjack
+  HIT_NUM = 1
+  STAND_NUM = 2
+  WIN = 1
+  LOSE = 0
+  GAME_CONTINUE_NUM = 1
+  GAME_END_NUM = 2
+
   include Rule
   include Message
 
@@ -170,9 +177,9 @@ class Blackjack
   end
 
   def info_judge
-    if @player.win?
+    if @player.win?(WIN)
       win_msg(@player)
-    elsif @player.lose?
+    elsif @player.lose?(LOSE)
       lose_msg(@player)
     else
       end_in_tie_msg
@@ -196,14 +203,14 @@ class Blackjack
 
   def calculate_dividend
     rate =
-      if @player.win? && @player.blackjack?
-        BLACKJACK_RATE
-      elsif @player.win? && !@player.blackjack?
-        NORMAL_WIN_RATE
-      elsif !@player.win? && !@player.lose?
-        TIE_RATE
-      elsif @player.lose?
-        LOSE_RATE
+      if @player.win?(WIN) && @player.blackjack?
+        RATE_BLACKJACK
+      elsif @player.win?(WIN) && !@player.blackjack?
+        RATE_NORMAL_WIN
+      elsif !@player.win?(WIN) && !@player.lose?(LOSE)
+        RATE_TIE
+      elsif @player.lose?(LOSE)
+        RATE_LOSE
       end
     (@bet * rate).floor
   end
@@ -218,7 +225,6 @@ class Blackjack
     when GAME_CONTINUE_NUM
       game_continue_msg
     end
-    action_num
   end
 
   def request_continue_or_end
