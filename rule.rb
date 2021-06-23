@@ -10,4 +10,20 @@ module Rule
   RATE_NORMAL_WIN = 2
   RATE_TIE = 1
   RATE_LOSE = 0
+
+  def adjustable?(point)
+    point + ADJUST_NUM <= BLACKJACK_NUM
+  end
+
+  def blackjack_conditions?(point, hand_cards)
+    point == BLACKJACK_NUM && hand_cards.size == BLACKJACK_HAND_CARDS_SIZE
+  end
+
+  def bust_conditions?(point)
+    point > BLACKJACK_NUM
+  end
+
+  def continue_drawing?(dealer)
+    dealer.point < STOP_DRAWING_NUM
+  end
 end

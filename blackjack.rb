@@ -8,8 +8,8 @@ require_relative "message"
 class Blackjack
   HIT_NUM = 1
   STAND_NUM = 2
-  WIN = 1
-  LOSE = 0
+  GAME_RESULT_WIN = 1
+  GAME_RESULT_LOSE = 0
   GAME_CONTINUE_NUM = 1
   GAME_END_NUM = 2
 
@@ -123,7 +123,7 @@ class Blackjack
     $stdin.gets.chomp
 
     # 17未満の間はカードを引く
-    while @dealer.point < STOP_DRAWING_NUM
+    while continue_drawing?(@dealer)
       dealer_draw_msg(@dealer, STOP_DRAWING_NUM)
       deal_card_to(@dealer)
       show_hand_msg(@dealer)
@@ -156,13 +156,13 @@ class Blackjack
     info_status_or_points(@dealer)
 
     if @dealer.bust?
-      @player.game_result = WIN
+      @player.game_result = GAME_RESULT_WIN
     elsif @player.bust?
-      @player.game_result = LOSE
+      @player.game_result = GAME_RESULT_LOSE
     elsif @dealer.point < @player.point
-      @player.game_result = WIN
+      @player.game_result = GAME_RESULT_WIN
     elsif @player.point < @dealer.point
-      @player.game_result = LOSE
+      @player.game_result = GAME_RESULT_LOSE
     else
       judge_winner_when_same_point
     end
@@ -170,16 +170,16 @@ class Blackjack
 
   def judge_winner_when_same_point
     if @player.blackjack? && !@dealer.blackjack?
-      @player.game_result = WIN
+      @player.game_result = GAME_RESULT_WIN
     elsif !@player.blackjack? && @dealer.blackjack?
-      @player.game_result = LOSE
+      @player.game_result = GAME_RESULT_LOSE
     end
   end
 
   def info_judge
-    if @player.win?(WIN)
+    if @player.win?(GAME_RESULT_WIN)
       win_msg(@player)
-    elsif @player.lose?(LOSE)
+    elsif @player.lose?(GAME_RESULT_LOSE)
       lose_msg(@player)
     else
       end_in_tie_msg
@@ -203,13 +203,13 @@ class Blackjack
 
   def calculate_dividend
     rate =
-      if @player.win?(WIN) && @player.blackjack?
+      if @player.win?(GAME_RESULT_WIN) && @player.blackjack?
         RATE_BLACKJACK
-      elsif @player.win?(WIN) && !@player.blackjack?
+      elsif @player.win?(GAME_RESULT_WIN) && !@player.blackjack?
         RATE_NORMAL_WIN
-      elsif !@player.win?(WIN) && !@player.lose?(LOSE)
+      elsif !@player.win?(GAME_RESULT_WIN) && !@player.lose?(GAME_RESULT_LOSE)
         RATE_TIE
-      elsif @player.lose?(LOSE)
+      elsif @player.lose?(GAME_RESULT_LOSE)
         RATE_LOSE
       end
     (@bet * rate).floor

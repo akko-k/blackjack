@@ -29,7 +29,7 @@ class Character
   def calc_point
     @point_list = []
     @point_list << @point = @hand_cards.map(&:point).sum
-    if has_ace? && (@point + ADJUST_NUM <= BLACKJACK_NUM)
+    if has_ace? && adjustable?(@point)
       @point += ADJUST_NUM
       @point_list.unshift(@point)
     end
@@ -41,9 +41,9 @@ class Character
   end
 
   def change_status
-    if @point == BLACKJACK_NUM && @hand_cards.size == BLACKJACK_HAND_CARDS_SIZE
+    if blackjack_conditions?(@point, @hand_cards)
       @status = STATUS_BLACKJACK
-    elsif @point > BLACKJACK_NUM
+    elsif bust_conditions?(point)
       @status = STATUS_BUST
     end
   end
