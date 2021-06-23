@@ -27,15 +27,15 @@ module Rule
     dealer.point < STOP_DRAWING_NUM
   end
 
-  def calculate_dividend(dealer, player, bet, win, lose)
+  def calculate_dividend(player, bet, win, lose)
     rate =
-      if @player.win?(win) && @player.blackjack?
+      if player.win?(win) && player.blackjack?
         RATE_BLACKJACK
-      elsif @player.win?(win) && !@player.blackjack?
+      elsif player.win?(win) && !player.blackjack?
         RATE_NORMAL_WIN
-      elsif !@player.win?(win) && !@player.lose?(lose)
+      elsif !player.win?(win) && !player.lose?(lose)
         RATE_TIE
-      elsif @player.lose?(lose)
+      elsif player.lose?(lose)
         RATE_LOSE
       end
     (bet * rate).floor

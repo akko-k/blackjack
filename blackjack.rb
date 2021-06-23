@@ -191,7 +191,7 @@ class Blackjack
     type_enter_msg
     $stdin.gets.chomp
 
-    dividend = calculate_dividend(@dealer, @player, @bet, GAME_RESULT_WIN, GAME_RESULT_LOSE)
+    dividend = calculate_dividend(@player, @bet, GAME_RESULT_WIN, GAME_RESULT_LOSE)
     @player.settle(dividend)
 
     dividend_msg(dividend, @player)
