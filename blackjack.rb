@@ -123,7 +123,7 @@ class Blackjack
     $stdin.gets.chomp
 
     # 17未満の間はカードを引く
-    while continue_drawing?(@dealer)
+    while continue_drawing_conditions?(@dealer)
       dealer_draw_msg(@dealer, STOP_DRAWING_NUM)
       deal_card_to(@dealer)
       show_hand_msg(@dealer)
@@ -191,7 +191,7 @@ class Blackjack
     type_enter_msg
     $stdin.gets.chomp
 
-    dividend = calculate_dividend
+    dividend = calculate_dividend(@dealer, @player, @bet, GAME_RESULT_WIN, GAME_RESULT_LOSE)
     @player.settle(dividend)
 
     dividend_msg(dividend, @player)
@@ -199,20 +199,6 @@ class Blackjack
       info_gameover_msg
       exit
     end
-  end
-
-  def calculate_dividend
-    rate =
-      if @player.win?(GAME_RESULT_WIN) && @player.blackjack?
-        RATE_BLACKJACK
-      elsif @player.win?(GAME_RESULT_WIN) && !@player.blackjack?
-        RATE_NORMAL_WIN
-      elsif !@player.win?(GAME_RESULT_WIN) && !@player.lose?(GAME_RESULT_LOSE)
-        RATE_TIE
-      elsif @player.lose?(GAME_RESULT_LOSE)
-        RATE_LOSE
-      end
-    (@bet * rate).floor
   end
 
   def continue_or_end
