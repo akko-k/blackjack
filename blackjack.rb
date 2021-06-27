@@ -6,6 +6,13 @@ require_relative "rule"
 require_relative "message"
 
 class Blackjack
+  HIT_NUM = 1
+  STAND_NUM = 2
+  GAME_RESULT_WIN = 1
+  GAME_RESULT_LOSE = 0
+  GAME_CONTINUE_NUM = 1
+  GAME_END_NUM = 2
+
   include Rule
   include Message
 
@@ -116,7 +123,7 @@ class Blackjack
     $stdin.gets.chomp
 
     # 17未満の間はカードを引く
-    while @dealer.point < STOP_DRAWING_NUM
+    while continue_drawing_conditions?(@dealer)
       dealer_draw_msg(@dealer, STOP_DRAWING_NUM)
       deal_card_to(@dealer)
       show_hand_msg(@dealer)
@@ -149,13 +156,13 @@ class Blackjack
     info_status_or_points(@dealer)
 
     if @dealer.bust?
-      @player.game_result = WIN
+      @player.game_result = GAME_RESULT_WIN
     elsif @player.bust?
-      @player.game_result = LOSE
+      @player.game_result = GAME_RESULT_LOSE
     elsif @dealer.point < @player.point
-      @player.game_result = WIN
+      @player.game_result = GAME_RESULT_WIN
     elsif @player.point < @dealer.point
-      @player.game_result = LOSE
+      @player.game_result = GAME_RESULT_LOSE
     else
       judge_winner_when_same_point
     end
@@ -163,16 +170,16 @@ class Blackjack
 
   def judge_winner_when_same_point
     if @player.blackjack? && !@dealer.blackjack?
-      @player.game_result = WIN
+      @player.game_result = GAME_RESULT_WIN
     elsif !@player.blackjack? && @dealer.blackjack?
-      @player.game_result = LOSE
+      @player.game_result = GAME_RESULT_LOSE
     end
   end
 
   def info_judge
-    if @player.win?
+    if @player.win?(GAME_RESULT_WIN)
       win_msg(@player)
-    elsif @player.lose?
+    elsif @player.lose?(GAME_RESULT_LOSE)
       lose_msg(@player)
     else
       end_in_tie_msg
@@ -184,7 +191,7 @@ class Blackjack
     type_enter_msg
     $stdin.gets.chomp
 
-    dividend = calculate_dividend
+    dividend = calculate_dividend(@player, @bet, GAME_RESULT_WIN, GAME_RESULT_LOSE)
     @player.settle(dividend)
 
     dividend_msg(dividend, @player)
@@ -192,20 +199,6 @@ class Blackjack
       info_gameover_msg
       exit
     end
-  end
-
-  def calculate_dividend
-    rate =
-      if @player.win? && @player.blackjack?
-        BLACKJACK_RATE
-      elsif @player.win? && !@player.blackjack?
-        NORMAL_WIN_RATE
-      elsif !@player.win? && !@player.lose?
-        TIE_RATE
-      elsif @player.lose?
-        LOSE_RATE
-      end
-    (@bet * rate).floor
   end
 
   def continue_or_end
@@ -218,7 +211,6 @@ class Blackjack
     when GAME_CONTINUE_NUM
       game_continue_msg
     end
-    action_num
   end
 
   def request_continue_or_end

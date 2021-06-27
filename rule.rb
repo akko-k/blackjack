@@ -3,17 +3,41 @@ module Rule
   ADJUST_NUM = 10
   BLACKJACK_HAND_CARDS_SIZE = 2
   BLACKJACK_POINT_LIST_SIZE = 2
-  BLACKJACK = 0
-  BUST = 1
-  HIT_NUM = 1
-  STAND_NUM = 2
+  STATUS_BLACKJACK = 0
+  STATUS_BUST = 1
   STOP_DRAWING_NUM = 17
-  WIN = 1
-  LOSE = 0
-  BLACKJACK_RATE = 2.5
-  NORMAL_WIN_RATE = 2
-  TIE_RATE = 1
-  LOSE_RATE = 0
-  GAME_CONTINUE_NUM = 1
-  GAME_END_NUM = 2
+  RATE_BLACKJACK = 2.5
+  RATE_NORMAL_WIN = 2
+  RATE_TIE = 1
+  RATE_LOSE = 0
+
+  def adjustable?(point)
+    point + ADJUST_NUM <= BLACKJACK_NUM
+  end
+
+  def blackjack_conditions?(point, hand_cards)
+    point == BLACKJACK_NUM && hand_cards.size == BLACKJACK_HAND_CARDS_SIZE
+  end
+
+  def bust_conditions?(point)
+    point > BLACKJACK_NUM
+  end
+
+  def continue_drawing_conditions?(dealer)
+    dealer.point < STOP_DRAWING_NUM
+  end
+
+  def calculate_dividend(player, bet, win, lose)
+    rate =
+      if player.win?(win) && player.blackjack?
+        RATE_BLACKJACK
+      elsif player.win?(win) && !player.blackjack?
+        RATE_NORMAL_WIN
+      elsif !player.win?(win) && !player.lose?(lose)
+        RATE_TIE
+      elsif player.lose?(lose)
+        RATE_LOSE
+      end
+    (bet * rate).floor
+  end
 end

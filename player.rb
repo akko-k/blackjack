@@ -27,12 +27,12 @@ class Player < Character
     action_num = gets.chomp.to_i
   end
 
-  def win?
-    @game_result == WIN
+  def win?(win)
+    @game_result == win
   end
 
-  def lose?
-    @game_result == LOSE
+  def lose?(lose)
+    @game_result == lose
   end
 
   def settle(dividend)
