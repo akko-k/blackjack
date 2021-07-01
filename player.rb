@@ -26,7 +26,7 @@ class Player < Character
   end
 
   def select_action
-    action_num = gets.chomp.to_i
+    gets.chomp.to_i
   end
 
   def set_win

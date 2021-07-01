@@ -27,7 +27,7 @@ class Card
     "#{@mark} #{@number}"
   end
 
-  def is_ace?
+  def ace?
     @number if @number == "A"
   end
 end
