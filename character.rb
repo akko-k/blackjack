@@ -29,15 +29,15 @@ class Character
   def calc_point
     @point_list = []
     @point_list << @point = @hand_cards.map(&:point).sum
-    if has_ace? && adjustable?(@point)
+    if ace? && adjustable?(@point)
       @point += ADJUST_NUM
       @point_list.unshift(@point)
     end
     change_status
   end
 
-  def has_ace?
-    @hand_cards.map(&:is_ace?).any?
+  def ace?
+    @hand_cards.map(&:ace?).any?
   end
 
   def change_status
