@@ -5,6 +5,8 @@ class Player < Character
   attr_writer :game_result
 
   INITIAL_MONEY = 10_000
+  GAME_RESULT_WIN = 1
+  GAME_RESULT_LOSE = 0
 
   def initialize
     @money = INITIAL_MONEY
@@ -27,12 +29,20 @@ class Player < Character
     action_num = gets.chomp.to_i
   end
 
-  def win?(win)
-    @game_result == win
+  def set_win
+    @game_result = GAME_RESULT_WIN
   end
 
-  def lose?(lose)
-    @game_result == lose
+  def set_lose
+    @game_result = GAME_RESULT_LOSE
+  end
+
+  def win?
+    @game_result == GAME_RESULT_WIN
+  end
+
+  def lose?
+    @game_result == GAME_RESULT_LOSE
   end
 
   def settle(dividend)

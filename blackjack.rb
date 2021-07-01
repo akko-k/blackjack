@@ -8,8 +8,6 @@ require_relative "message"
 class Blackjack
   HIT_NUM = 1
   STAND_NUM = 2
-  GAME_RESULT_WIN = 1
-  GAME_RESULT_LOSE = 0
   GAME_CONTINUE_NUM = 1
   GAME_END_NUM = 2
 
@@ -156,13 +154,13 @@ class Blackjack
     info_status_or_points(@dealer)
 
     if @dealer.bust?
-      @player.game_result = GAME_RESULT_WIN
+      @player.set_win
     elsif @player.bust?
-      @player.game_result = GAME_RESULT_LOSE
+      @player.set_lose
     elsif @dealer.point < @player.point
-      @player.game_result = GAME_RESULT_WIN
+      @player.set_win
     elsif @player.point < @dealer.point
-      @player.game_result = GAME_RESULT_LOSE
+      @player.set_lose
     else
       judge_winner_when_same_point
     end
@@ -170,16 +168,16 @@ class Blackjack
 
   def judge_winner_when_same_point
     if @player.blackjack? && !@dealer.blackjack?
-      @player.game_result = GAME_RESULT_WIN
+      @player.set_win
     elsif !@player.blackjack? && @dealer.blackjack?
-      @player.game_result = GAME_RESULT_LOSE
+      @player.set_lose
     end
   end
 
   def info_judge
-    if @player.win?(GAME_RESULT_WIN)
+    if @player.win?
       win_msg(@player)
-    elsif @player.lose?(GAME_RESULT_LOSE)
+    elsif @player.lose?
       lose_msg(@player)
     else
       end_in_tie_msg
@@ -191,7 +189,7 @@ class Blackjack
     type_enter_msg
     $stdin.gets.chomp
 
-    dividend = calculate_dividend(@player, @bet, GAME_RESULT_WIN, GAME_RESULT_LOSE)
+    dividend = calculate_dividend(@player, @bet)
     @player.settle(dividend)
 
     dividend_msg(dividend, @player)
