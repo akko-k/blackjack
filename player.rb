@@ -18,7 +18,7 @@ class Player < Character
   end
 
   def decide_bet
-    bet = gets.chomp.to_i
+    gets.chomp.to_i
   end
 
   def bet_money(bet)
