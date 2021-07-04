@@ -1,3 +1,5 @@
+require_relative "dealer"
+require_relative "player"
 require_relative "blackjack"
 require "pry"
 
