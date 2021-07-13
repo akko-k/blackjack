@@ -91,6 +91,14 @@ module Message
     TEXT
   end
 
+  def bust_msg(character)
+    puts <<~TEXT
+
+      #{character.class}はバーストしました。
+
+    TEXT
+  end
+
   def select_action_msg(player, hit_num, stand_num)
     puts <<~TEXT
 
@@ -106,14 +114,6 @@ module Message
       --------------------------------------
       error ： #{hit_num} か #{stand_num} を入力してください。
       --------------------------------------
-    TEXT
-  end
-
-  def bust_msg(character)
-    puts <<~TEXT
-
-      #{character.class}はバーストしました。
-
     TEXT
   end
 
