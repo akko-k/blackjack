@@ -8,7 +8,7 @@ class Blackjack
   GAME_CONTINUE_NUM = 1
   GAME_END_NUM = 2
 
-  # include Rule
+  include Rule
   include Message
 
   def initialize(dealer, player)
