@@ -75,6 +75,17 @@ class Blackjack
     character.receive(drawn_card)
   end
 
+  def info_status_or_points(character)
+    if character.blackjack?
+      blackjack_msg(character)
+    elsif character.bust?
+      point_msg(character)
+      bust_msg(character)
+    else
+      point_msg(character)
+    end
+  end
+
   def start_players_turn
     loop do
       action_num = request_hit_or_stand
@@ -123,17 +134,6 @@ class Blackjack
       deal_card_to(@dealer)
       show_hand_msg(@dealer)
       info_status_or_points(@dealer)
-    end
-  end
-
-  def info_status_or_points(character)
-    if character.blackjack?
-      blackjack_msg(character)
-    elsif character.bust?
-      point_msg(character)
-      bust_msg(character)
-    else
-      point_msg(character)
     end
   end
 
