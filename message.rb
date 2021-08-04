@@ -142,18 +142,18 @@ module Message
     TEXT
   end
 
-  def compare_point_msg
-    puts <<~TEXT
-
-      勝敗判定に参りましょう。
-
-    TEXT
-  end
-
   def type_enter_msg
     puts <<~TEXT
 
       （ キーボードでEnterキーを押してください。）
+
+    TEXT
+  end
+
+  def compare_point_msg
+    puts <<~TEXT
+
+      勝敗判定に参りましょう。
 
     TEXT
   end
