@@ -1,6 +1,6 @@
 require_relative "deck"
-require_relative "rule"
 require_relative "message"
+require_relative "rule"
 
 class Blackjack
   HIT_NUM = 1
@@ -8,8 +8,8 @@ class Blackjack
   GAME_CONTINUE_NUM = 1
   GAME_END_NUM = 2
 
-  include Rule
   include Message
+  include Rule
 
   def initialize(dealer, player)
     @dealer = dealer
