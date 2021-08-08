@@ -33,7 +33,6 @@ class Blackjack
       start_dealers_turn unless @player.bust?
 
       judge_winner
-      info_judge
       settle_dividend
       continue_or_end
     end
@@ -161,6 +160,8 @@ class Blackjack
     else
       judge_winner_when_same_point
     end
+
+    info_judge
   end
 
   def judge_winner_when_same_point
