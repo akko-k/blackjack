@@ -34,7 +34,7 @@ class Blackjack
 
       judge_winner
       settle_dividend
-      game_over_exit if @player.money == 0
+      game_exit if @player.money == 0
 
       continue_or_exit
     end
@@ -225,8 +225,4 @@ class Blackjack
     action_num
   end
 
-  def game_end_exit
-    game_end_msg
-    exit
-  end
 end
