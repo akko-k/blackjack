@@ -6,7 +6,7 @@ class Blackjack
   HIT_NUM = 1
   STAND_NUM = 2
   GAME_CONTINUE_NUM = 1
-  GAME_END_NUM = 2
+  GAME_EXIT_NUM = 2
 
   include Message
   include Rule
@@ -34,7 +34,9 @@ class Blackjack
 
       judge_winner
       settle_dividend
-      continue_or_end
+      game_over_exit if @player.money == 0
+
+      continue_or_exit
     end
   end
 
@@ -191,34 +193,40 @@ class Blackjack
     @player.settle(dividend)
 
     dividend_msg(dividend, @player)
-    if @player.money == 0
-      info_gameover_msg
-      exit
-    end
   end
 
-  def continue_or_end
-    action_num = request_continue_or_end
+  def game_exit
+    info_gameover_msg
+    exit
+  end
+
+  def continue_or_exit
+    action_num = request_continue_or_exit
 
     case action_num
-    when GAME_END_NUM
-      game_end_msg
+    when GAME_EXIT_NUM
+      game_exit_msg
       exit
     when GAME_CONTINUE_NUM
       game_continue_msg
     end
   end
 
-  def request_continue_or_end
-    continue_or_end_msg(GAME_CONTINUE_NUM, GAME_END_NUM)
+  def request_continue_or_exit
+    continue_or_exit_msg(GAME_CONTINUE_NUM, GAME_EXIT_NUM)
 
     action_num = 0
     loop do
       action_num = @player.select_action
-      break if action_num.between?(GAME_CONTINUE_NUM, GAME_END_NUM)
+      break if action_num.between?(GAME_CONTINUE_NUM, GAME_EXIT_NUM)
 
-      error_msg_about_continue_or_end(GAME_CONTINUE_NUM, GAME_END_NUM)
+      error_msg_about_continue_or_exit(GAME_CONTINUE_NUM, GAME_EXIT_NUM)
     end
     action_num
+  end
+
+  def game_end_exit
+    game_end_msg
+    exit
   end
 end

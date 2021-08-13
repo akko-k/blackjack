@@ -46,6 +46,5 @@ class Player < Character
 
   def settle(dividend)
     @money += dividend
-    # @money = 0 if @money < 0 ※0未満になるケースがない
   end
 end
