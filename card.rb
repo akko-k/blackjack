@@ -1,5 +1,5 @@
 class Card
-  attr_reader :point
+  # attr_reader :point
 
   @@card_point = {
     "2" => 2,

@@ -1,5 +1,5 @@
-require_relative "deck"
 require_relative "message"
+require_relative "deck"
 require_relative "rule"
 
 class Blackjack

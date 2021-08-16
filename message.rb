@@ -177,7 +177,7 @@ module Message
   def end_in_tie_msg
     puts <<~TEXT
     
-      合計得点が同点となりました。引き分けです。
+      合計ポイントが同点となりました。引き分けです。
     
     TEXT
   end
